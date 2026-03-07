@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/splash.dart';
 import 'widgets/navbar.dart';
 
 void main() {
@@ -10,10 +11,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: true,
       title: 'Embark!',
-      home: NavBar(),
+
+      initialRoute: '/',
+
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/navbar': (context) => const NavBar(),
+      }
     );
   }
 }
