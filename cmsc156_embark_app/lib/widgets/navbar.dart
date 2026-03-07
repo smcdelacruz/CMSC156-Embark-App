@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../screens/home.dart';
+import '../screens/add_entry.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -13,52 +15,57 @@ class _NavBarState extends State<NavBar> {
   final Color _activeColor = const Color(0xFFF08080);
   final Color _inactiveColor = Colors.black;
 
+  final List<Widget> _pages = const [
+    HomeScreen(),
+    Center(child: Text("Checklist Page", style: TextStyle(fontSize: 24))),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          _selectedIndex == 0 ? 'Home Page' : 'Checklist Page', //for testing
-          style: const TextStyle(fontSize: 24),
-        ),
-      ),
+      body: _pages[_selectedIndex],
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+
       floatingActionButton: Stack(
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
           FloatingActionButton(
             onPressed: () {
-              print("FAB Pressed"); //temp
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AddEntryScreen()),
+              );
             },
             backgroundColor: const Color(0xFFF08080),
             shape: const CircleBorder(),
             child: const Icon(Icons.pets, color: Colors.white),
           ),
-          Positioned(
+          const Positioned(
             bottom: -20,
-            child: const Text(
+            child: Text(
               'Add Entry',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-              ), //reminder: change font
+              style: TextStyle(color: Colors.black, fontSize: 12),
             ),
           ),
         ],
       ),
+
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Divider(height: 1, thickness: 1, color: Colors.white10),
+          const Divider(height: 1, thickness: 1, color: Colors.white12),
+
           BottomAppBar(
             shape: const CircularNotchedRectangle(),
             color: Colors.white,
+
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                /// HOME
                 InkWell(
-                  //home icon
                   onTap: () {
                     setState(() {
                       _selectedIndex = 0;
@@ -85,9 +92,11 @@ class _NavBarState extends State<NavBar> {
                     ],
                   ),
                 ),
+
                 const SizedBox(width: 40),
+
+                /// CHECKLIST
                 InkWell(
-                  //checklist icon
                   onTap: () {
                     setState(() {
                       _selectedIndex = 1;
