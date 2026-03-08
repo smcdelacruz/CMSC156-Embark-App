@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../screens/home.dart';
 import '../screens/add_entry.dart';
+import '../screens/stray_checklist/checklist.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -15,10 +16,7 @@ class _NavBarState extends State<NavBar> {
   final Color _activeColor = const Color(0xFFF08080);
   final Color _inactiveColor = Colors.black;
 
-  final List<Widget> _pages = const [
-    HomeScreen(),
-    Center(child: Text("Checklist Page", style: TextStyle(fontSize: 24))),
-  ];
+  final List<Widget> _pages = const [HomeScreen(), ChecklistScreen()];
 
   @override
   Widget build(BuildContext context) {
