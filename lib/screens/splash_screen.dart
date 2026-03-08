@@ -177,7 +177,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         ),
                         textAlign: TextAlign.center,
                       )
-
                     ),
                   )
                 )
