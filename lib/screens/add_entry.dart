@@ -82,7 +82,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
               /// SEX DROPDOWN
               DropdownButtonFormField<String>(
-                value: sex,
+                initialValue: sex,
                 decoration: const InputDecoration(
                   labelText: "Sex",
                   border: OutlineInputBorder(),
@@ -112,7 +112,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
               /// LOCATION DROPDOWN
               DropdownButtonFormField<String>(
-                value: location,
+                initialValue: location,
                 decoration: const InputDecoration(
                   labelText: "Location",
                   border: OutlineInputBorder(),
