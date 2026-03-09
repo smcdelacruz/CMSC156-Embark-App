@@ -51,6 +51,41 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            // PLACEHOLDER: List of Added Strays
+            Expanded(
+              child: ListView.builder(
+                itemCount: 2, // Generates 5 placeholder cards so you can test scrolling
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    // ListTile is a great temporary widget for lists
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      leading: const CircleAvatar(
+                        backgroundColor: Color(0xFFF9DCC4),
+                        child: Icon(Icons.pets, color: Colors.black54),
+                      ),
+                      title: Text(
+                        "Stray Buddy #${index + 1}",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: const Text("Spotted near the library..."),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      
+                      // Routing to the Feature Page
+                      onTap: () {
+                        Navigator.pushNamed(context, '/feature');
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
