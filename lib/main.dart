@@ -4,7 +4,8 @@ import 'widgets/navbar.dart';
 import 'screens/home.dart';
 import 'screens/feature_page/feature_page.dart';
 import 'screens/feature_page/edit_entry.dart';
-
+import 'screens/archive_entry.dart';
+import 'screens/add_entry.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         '/navbar': (context) => const NavBar(),
         '/home': (context) => const HomeScreen(),
         '/feature': (context) => const FeaturePage(),
+        '/add': (context) => const AddEntryScreen(),
+        '/archive': (context) => const ArchiveEntryScreen(),
         '/edit': (context) => const EditEntryPage(),
       }
     );
