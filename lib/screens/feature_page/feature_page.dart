@@ -275,6 +275,7 @@ class _FeaturePageState extends State<FeaturePage> {
               child: Center(
                 // === LIKE BUTTON (Heart) ===
                   child: LikeButton(
+                    
                     padding: EdgeInsets.zero,
                     mainAxisAlignment: MainAxisAlignment.center,
                     likeCountPadding: EdgeInsets.zero,
@@ -335,12 +336,10 @@ class _FeaturePageState extends State<FeaturePage> {
                                   //   color: Color(0xFFF8EDEB),
                                   //   size: 14,
                                   )
-                                )
-                                
+                                )    
                           ]
                         )
                       );
-                      
                     },
                     
                     // onTap: () {
@@ -348,11 +347,8 @@ class _FeaturePageState extends State<FeaturePage> {
                     // },
                   ),
               )
-              
-
             ),
           ),
-          
         ],
       ),
     );
