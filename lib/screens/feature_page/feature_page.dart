@@ -1,21 +1,27 @@
 /* This is the Feature Page that shows all the details of a specific pet entry. 
 * It includes a large background image, pet details, and an "Edit" and "Archive" options.
 */
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:like_button/like_button.dart';
 import '../../widgets/feature_page_stats.dart';
 
-class FeaturePage extends StatelessWidget {
+class FeaturePage extends StatefulWidget {
   const FeaturePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  State<FeaturePage> createState() => _FeaturePageState();
+}
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
+class _FeaturePageState extends State<FeaturePage> {
+  bool isLiked = false;
+  late final size = MediaQuery.of(context).size;
+
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
         children: [
           // === BACKGROUND IMAGE ===
           Positioned(
@@ -252,6 +258,7 @@ class FeaturePage extends StatelessWidget {
             top: size.height * 0.40 - 28, 
             right: 30,
             child: Container(
+              alignment: Alignment.center,
               height: 56,
               width: 56,
               decoration: BoxDecoration(
@@ -265,14 +272,87 @@ class FeaturePage extends StatelessWidget {
                   ),
                 ],
               ),
-              child: IconButton(
-                icon: const Icon(Icons.favorite_border, color: Colors.white, size: 28),
-                onPressed: () {
-                  // To add the like (heart) logic
-                },
-              ),
+              child: Center(
+                // === LIKE BUTTON (Heart) ===
+                  child: LikeButton(
+                    padding: EdgeInsets.zero,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    likeCountPadding: EdgeInsets.zero,
+                    bubblesColor: const BubblesColor(
+                      dotPrimaryColor: Color(0xFFF8EDEB),
+                      dotSecondaryColor: Colors.red,
+                    ),
+                    size: 34,
+
+                    likeBuilder: (isLiked) {
+                      
+                      // The heart button with the "+" badge when not liked
+                      return SizedBox(
+                        width: 34,
+                        height: 34,
+
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Center(
+                              child: Icon(
+                                isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+                                color: Color(0xFFF8EDEB),
+                                size: 34,
+                                
+                              ),
+                            ),
+
+                            // "+" badge
+                            if (!isLiked)
+                              Positioned(
+                                bottom:-1,
+                                right: 1,
+
+                                // The small circular badge with the "+" icon 
+                                // to mask the corner of the heart
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF08080),
+                                    shape: BoxShape.circle,
+                                    
+                                  ),
+
+                                  padding: const EdgeInsets.all(3),
+                                  
+                                  // The "+" icon inside the badge
+                                  child: Text(
+                                    "+",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFFF8EDEB),
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                  // child: Icon(
+                                  //   Icons.add,
+                                  //   color: Color(0xFFF8EDEB),
+                                  //   size: 14,
+                                  )
+                                )
+                                
+                          ]
+                        )
+                      );
+                      
+                    },
+                    
+                    // onTap: () {
+                    //   // TODO add the like (heart) logic
+                    // },
+                  ),
+              )
+              
+
             ),
           ),
+          
         ],
       ),
     );
