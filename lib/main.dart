@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: true,
       title: 'Embark!',
 
-      initialRoute: '/',
+      // === NAMED ROUTES FOR ALL SCREENS ===
+      initialRoute: '/',  
 
       routes: {
         '/': (context) => const SplashScreen(),

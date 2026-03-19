@@ -12,9 +12,28 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Embark!",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // === APP TITLE + ARCHIVE BUTTON ===
+              children: [
+                const Text(
+                  "Embark!",
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ), 
+
+                // Archive Button
+                IconButton(
+                    icon: const Icon(
+                      Icons.archive_rounded, 
+                      color: Color.fromARGB(156, 0, 0, 0),
+                      size: 32,),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/archive');
+                    },
+                    tooltip: "Archive",
+                ),
+              ],
             ),
 
             const SizedBox(height: 20),
