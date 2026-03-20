@@ -5,7 +5,7 @@ import 'screens/home.dart';
 import 'screens/feature_page/feature_page.dart';
 import 'screens/feature_page/edit_entry.dart';
 import 'screens/archive_entry.dart';
-import 'screens/add_entry_stepone.dart';
+import 'screens/add_entry/add_entry_stepone.dart';
 
 void main() {
   runApp(const MyApp());

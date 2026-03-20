@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../widgets/app_color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../widgets/app_color.dart';
 import 'confirm_submit.dart';
 
 class AddEntryStep2 extends StatefulWidget {
@@ -10,23 +11,39 @@ class AddEntryStep2 extends StatefulWidget {
 }
 
 class _AddEntryStep2State extends State<AddEntryStep2> {
-  final traits = [
-    "Sweet",
-    "Intelligent",
-    "Clingy",
-    "Loyal",
-    "Friendly",
-    "Calm",
-    "Lively",
-    "Energetic",
-    "Persistent",
-    "Sociable",
-    "Clever",
-  ];
+  final temperamentController = TextEditingController();
+  final dewormingController = TextEditingController();
+  final vaccinationController = TextEditingController();
 
-  final selectedTraits = <String>{};
-  final descriptionController = TextEditingController();
-  final notesController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _loadFromPrefs();
+  }
+
+  /// Load saved values from SharedPreferences
+  Future<void> _loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    temperamentController.text = prefs.getString('temperament') ?? '';
+    dewormingController.text = prefs.getString('deworming') ?? '';
+    vaccinationController.text = prefs.getString('vaccination') ?? '';
+  }
+
+  /// Save current values to SharedPreferences
+  Future<void> _saveToPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('temperament', temperamentController.text);
+    await prefs.setString('deworming', dewormingController.text);
+    await prefs.setString('vaccination', vaccinationController.text);
+  }
+
+  @override
+  void dispose() {
+    temperamentController.dispose();
+    dewormingController.dispose();
+    vaccinationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,63 +80,9 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
           children: [
             const SizedBox(height: 4),
 
-            /// Traits label
+            /// Temperament
             const Text(
-              "Traits",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54,
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            /// Trait chips
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                ...traits.map(
-                  (trait) => _TraitChip(
-                    label: trait,
-                    selected: selectedTraits.contains(trait),
-                    onTap: () {
-                      setState(() {
-                        selectedTraits.contains(trait)
-                            ? selectedTraits.remove(trait)
-                            : selectedTraits.add(trait);
-                      });
-                    },
-                  ),
-                ),
-                // "Add more" chip
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: const Text(
-                      "+",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            /// Description field
-            const Text(
-              "Description",
+              "Temperament and Personality",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -129,16 +92,15 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
             ),
             const SizedBox(height: 8),
             _MultilineField(
-              controller: descriptionController,
-              hint: "",
+              controller: temperamentController,
+              hint: "Describe temperament and personality",
               minLines: 3,
             ),
-
             const SizedBox(height: 20),
 
-            /// Notes field
+            /// Deworming
             const Text(
-              "Notes (Optional)",
+              "Deworming",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -147,8 +109,29 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
               ),
             ),
             const SizedBox(height: 8),
-            _MultilineField(controller: notesController, hint: "", minLines: 3),
+            _MultilineField(
+              controller: dewormingController,
+              hint: "Provide deworming details",
+              minLines: 3,
+            ),
+            const SizedBox(height: 20),
 
+            /// Vaccination
+            const Text(
+              "Vaccination",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _MultilineField(
+              controller: vaccinationController,
+              hint: "Provide vaccination details",
+              minLines: 3,
+            ),
             const SizedBox(height: 32),
 
             /// Submit button
@@ -163,7 +146,8 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  await _saveToPrefs(); // Save step 2 data
                   showDialog(
                     context: context,
                     builder: (_) => const ConfirmSubmitScreen(),
@@ -182,53 +166,6 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
             ),
             const SizedBox(height: 20),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TraitChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _TraitChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.primary : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: selected ? AppColors.primary : Colors.grey.shade300,
-          ),
-          boxShadow: selected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [],
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: selected ? Colors.white : Colors.black87,
-          ),
         ),
       ),
     );

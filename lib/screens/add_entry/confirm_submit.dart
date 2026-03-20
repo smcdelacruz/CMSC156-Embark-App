@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/app_color.dart';
+import '../../widgets/app_color.dart';
 import 'success_screen.dart';
 
 class ConfirmSubmitScreen extends StatelessWidget {

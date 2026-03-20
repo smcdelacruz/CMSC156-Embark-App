@@ -1,6 +1,6 @@
 import 'package:cmsc156_embark_app/screens/home.dart';
 import 'package:flutter/material.dart';
-import '../widgets/app_color.dart';
+import '../../widgets/app_color.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});
@@ -26,9 +26,10 @@ class SuccessScreen extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                Navigator.pushNamedAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  '/navbar', // use your named route
+                  (route) => false, // remove all previous routes
                 );
               },
               child: const Text("Back to Home"),

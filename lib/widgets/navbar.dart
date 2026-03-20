@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/home.dart';
-import '../screens/add_entry_stepone.dart';
+import '../screens/add_entry/add_entry_stepone.dart';
 import '../screens/stray_checklist/checklist.dart';
 
 class NavBar extends StatefulWidget {
