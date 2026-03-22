@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/app_color.dart';
+import '../../models/stray.dart';
 import 'confirm_submit.dart';
 
 class AddEntryStep2 extends StatefulWidget {
@@ -18,23 +19,40 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
   @override
   void initState() {
     super.initState();
-    _loadFromPrefs();
   }
 
-  /// Load saved values from SharedPreferences
-  Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    temperamentController.text = prefs.getString('temperament') ?? '';
-    dewormingController.text = prefs.getString('deworming') ?? '';
-    vaccinationController.text = prefs.getString('vaccination') ?? '';
-  }
-
-  /// Save current values to SharedPreferences
   Future<void> _saveToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('temperament', temperamentController.text);
-    await prefs.setString('deworming', dewormingController.text);
-    await prefs.setString('vaccination', vaccinationController.text);
+
+    // LOAD STEP 1 DATA
+    final name = prefs.getString('name') ?? '';
+    final age = prefs.getString('age') ?? '';
+    final sex = prefs.getString('sex') ?? '';
+    final nickname = prefs.getString('nicknames') ?? '';
+    final locations = prefs.getStringList('locations') ?? [];
+    final imagePath = prefs.getString('imagePath') ?? '';
+
+    // CREATE OBJECT
+    final stray = Stray(
+      name: name,
+      age: age,
+      sex: sex,
+      nickname: nickname,
+      locations: locations,
+      imagePath: imagePath,
+      temperament: temperamentController.text,
+      deworming: dewormingController.text,
+      vaccination: vaccinationController.text,
+    );
+
+    // GET EXISTING LIST
+    final List<String> strayList = prefs.getStringList('stray_list') ?? [];
+
+    // ADD NEW ENTRY
+    strayList.add(stray.toJson());
+
+    // SAVE BACK
+    await prefs.setStringList('stray_list', strayList);
   }
 
   @override
