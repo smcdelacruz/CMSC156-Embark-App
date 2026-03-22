@@ -6,6 +6,7 @@ import 'screens/feature_page/feature_page.dart';
 import 'screens/feature_page/edit_entry.dart';
 import 'screens/archive_entry.dart';
 import 'screens/add_entry/add_entry_stepone.dart';
+import 'models/stray.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/navbar': (context) => const NavBar(),
         '/home': (context) => const HomeScreen(),
-        '/feature': (context) => const FeaturePage(),
+        '/feature': (context) {
+          final stray = ModalRoute.of(context)!.settings.arguments as Stray;
+          return FeaturePage(stray: stray);
+        },
         '/add': (context) => AddEntryStep1(),
         '/archive': (context) => const ArchiveEntryScreen(),
         '/edit': (context) => const EditEntryPage(),

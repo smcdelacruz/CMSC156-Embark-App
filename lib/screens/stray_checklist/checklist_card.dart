@@ -1,0 +1,78 @@
+import 'package:flutter/material.dart';
+
+class ChecklistCard extends StatelessWidget {
+  final String title;
+  final int completed;
+  final int total;
+  final VoidCallback onTap;
+
+  const ChecklistCard({
+    super.key,
+    required this.title,
+    required this.completed,
+    required this.total,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDone = completed == total;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12), // ↓ smaller padding
+        decoration: BoxDecoration(
+          color: isDone
+              ? const Color(0xFFE8A7A0)
+              : const Color(0xFFE8A7A0).withOpacity(0.7),
+          borderRadius: BorderRadius.circular(14), // ↓ slightly tighter radius
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Text
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14, // ↓ smaller
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  "$completed/$total",
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11, // ↓ smaller
+                  ),
+                ),
+              ],
+            ),
+
+            // Paw icon
+            const Positioned(
+              bottom: -6,
+              right: -6,
+              child: Icon(
+                Icons.pets,
+                size: 84, // ↓ smaller icon
+                color: Colors.black45,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
