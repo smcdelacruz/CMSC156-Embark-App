@@ -21,12 +21,12 @@ class ChecklistCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12), // ↓ smaller padding
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isDone
               ? const Color(0xFFE8A7A0)
               : const Color(0xFFE8A7A0).withOpacity(0.7),
-          borderRadius: BorderRadius.circular(14), // ↓ slightly tighter radius
+          borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.06),
@@ -37,7 +37,6 @@ class ChecklistCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Text
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -45,30 +44,21 @@ class ChecklistCard extends StatelessWidget {
                   title,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 14, // ↓ smaller
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   "$completed/$total",
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 11, // ↓ smaller
-                  ),
+                  style: const TextStyle(color: Colors.white70, fontSize: 11),
                 ),
               ],
             ),
-
-            // Paw icon
             const Positioned(
               bottom: -6,
               right: -6,
-              child: Icon(
-                Icons.pets,
-                size: 84, // ↓ smaller icon
-                color: Colors.black45,
-              ),
+              child: Icon(Icons.pets, size: 84, color: Colors.black45),
             ),
           ],
         ),

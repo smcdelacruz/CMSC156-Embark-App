@@ -52,6 +52,5 @@ class Stray {
   }
 
   String toJson() => jsonEncode(toMap());
-
   factory Stray.fromJson(String source) => Stray.fromMap(jsonDecode(source));
 }

@@ -1,24 +1,49 @@
 import 'package:flutter/material.dart';
+import '../../models/stray.dart';
+import '../../models/stray_storage.dart';
 import 'checklist_card.dart';
 import 'detail_screen.dart';
 
-class ChecklistScreen extends StatelessWidget {
+class ChecklistScreen extends StatefulWidget {
   const ChecklistScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final locations = [
-      //placeholder values
-      {"name": "CAS", "completed": 1, "total": 1},
-      {"name": "CFOS", "completed": 1, "total": 1},
-      {"name": "CM", "completed": 0, "total": 1},
-      {"name": "CUB", "completed": 1, "total": 1},
-      {"name": "Dorms", "completed": 0, "total": 2},
-      {"name": "New Admin", "completed": 1, "total": 1},
-      {"name": "Staff House", "completed": 0, "total": 1},
-      {"name": "SSF-HSU", "completed": 1, "total": 1},
-    ];
+  State<ChecklistScreen> createState() => _ChecklistScreenState();
+}
 
+class _ChecklistScreenState extends State<ChecklistScreen> {
+  final locations = [
+    "CAS",
+    "CFOS",
+    "CM",
+    "CUB",
+    "Dorms",
+    "New Admin",
+    "Staff House",
+    "SSF-HSU",
+  ];
+
+  Map<String, List<Stray>> locationStrays = {};
+
+  @override
+  void initState() {
+    super.initState();
+    loadStrays();
+  }
+
+  void loadStrays() async {
+    final allStrays = await StrayStorage.loadStrays();
+    final map = <String, List<Stray>>{};
+    for (var loc in locations) {
+      map[loc] = allStrays.where((s) => s.locations.contains(loc)).toList();
+    }
+    setState(() {
+      locationStrays = map;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -33,7 +58,6 @@ class ChecklistScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -50,17 +74,14 @@ class ChecklistScreen extends StatelessWidget {
                     color: Colors.red.shade200,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    "1/10",
-                    style: TextStyle(color: Colors.white),
+                  child: Text(
+                    "${locationStrays.values.where((l) => l.isNotEmpty).length}/${locations.length}",
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
-            // Grid
             Expanded(
               child: GridView.builder(
                 itemCount: locations.length,
@@ -71,18 +92,17 @@ class ChecklistScreen extends StatelessWidget {
                   childAspectRatio: 1.2,
                 ),
                 itemBuilder: (context, index) {
-                  final item = locations[index];
-
+                  final loc = locations[index];
+                  final strays = locationStrays[loc] ?? [];
                   return ChecklistCard(
-                    title: item["name"] as String,
-                    completed: item["completed"] as int,
-                    total: item["total"] as int,
+                    title: loc,
+                    completed: strays.length, // all pets found
+                    total: strays.length > 0 ? strays.length : 1, // avoid 0/0
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              DetailScreen(title: item["name"] as String),
+                          builder: (_) => DetailScreen(title: loc),
                         ),
                       );
                     },
