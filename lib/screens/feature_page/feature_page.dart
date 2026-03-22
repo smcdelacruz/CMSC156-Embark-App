@@ -1,3 +1,7 @@
+/* This is the Feature Page that shows all the details of a specific pet entry. 
+* It includes a large background image, pet details, and an "Edit" and "Archive" options.
+*/
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -105,7 +109,12 @@ class _FeaturePageState extends State<FeaturePage> {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 30, 24, 40),
+                padding: const EdgeInsets.only(
+                  top: 30,
+                  left: 24,
+                  right: 24,
+                  bottom: 40,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,7 +137,7 @@ class _FeaturePageState extends State<FeaturePage> {
                           color: Color(0xFFF08080),
                           size: 20,
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             widget.stray.locations.join(", "),
@@ -151,18 +160,21 @@ class _FeaturePageState extends State<FeaturePage> {
                               ? "-"
                               : widget.stray.nickname,
                         ),
+                        SizedBox(width: 12),
                         FeaturePageStats(
                           title: "Age",
                           value: widget.stray.age.isEmpty
                               ? "-"
                               : widget.stray.age,
                         ),
+                        SizedBox(width: 12),
                         FeaturePageStats(
                           title: "Sex",
                           value: widget.stray.sex.isEmpty
                               ? "-"
                               : widget.stray.sex,
                         ),
+                        SizedBox(width: 12),
                       ],
                     ),
 
