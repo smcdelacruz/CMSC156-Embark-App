@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'feature_page/feature_page.dart';
+import 'search.dart';
+import '../widgets/stray_card.dart';
 import '../models/stray.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -64,7 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
               /// SEARCH
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/search');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SearchScreen(strays: strays),
+                    ),
+                  );
                 },
                 child: AbsorbPointer(
                   child: TextField(
@@ -73,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       filled: true,
                       hintText: "Search here...",
                       prefixIcon: const Icon(Icons.search),
-                      suffixIcon: const Icon(Icons.filter_list),
+                      //suffixIcon: const Icon(Icons.filter_list),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -100,60 +107,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final stray = strays[index];
 
-                          return Card(
-                            elevation: 2,
-                            margin: const EdgeInsets.only(bottom: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(12),
-
-                              /// IMAGE
-                              leading: CircleAvatar(
-                                radius: 26,
-                                backgroundColor: const Color(0xFFF9DCC4),
-                                backgroundImage: stray.imagePath.isNotEmpty
-                                    ? FileImage(File(stray.imagePath))
-                                    : null,
-                                child: stray.imagePath.isEmpty
-                                    ? const Icon(
-                                        Icons.pets,
-                                        color: Colors.black54,
-                                      )
-                                    : null,
-                              ),
-
-                              /// NAME
-                              title: Text(
-                                stray.name.isEmpty ? "Unnamed" : stray.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                          return StrayCard(
+                            stray: stray,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => FeaturePage(stray: stray),
                                 ),
-                              ),
-
-                              /// LOCATION
-                              subtitle: Text(
-                                stray.locations.isEmpty
-                                    ? "No location"
-                                    : stray.locations.join(", "),
-                              ),
-
-                              trailing: const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                              ),
-
-                              /// NAVIGATION
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => FeaturePage(stray: stray),
-                                  ),
-                                );
-                              },
-                            ),
+                              );
+                            },
                           );
                         },
                       ),

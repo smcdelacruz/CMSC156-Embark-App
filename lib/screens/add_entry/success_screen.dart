@@ -1,4 +1,3 @@
-import 'package:cmsc156_embark_app/screens/home.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/app_color.dart';
 

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'add_entry_steptwo.dart';
 import '../../widgets/app_color.dart';
 import '../../widgets/trait_chip.dart';
@@ -27,6 +28,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     "CUB",
     "Dorms",
     "New Admin",
+    "Sotech",
     "Staff House",
     "SSF-HSU",
   ];
@@ -70,9 +72,13 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     TextEditingController controller, {
     String hint = "",
     TextInputType keyboardType = TextInputType.text,
-  }) => TextField(
+    List<TextInputFormatter>? inputFormatters,
+    String? Function(String?)? validator,
+  }) => TextFormField(
     controller: controller,
     keyboardType: keyboardType,
+    inputFormatters: inputFormatters,
+    validator: validator,
     style: const TextStyle(fontSize: 14),
     decoration: InputDecoration(
       hintText: hint,
@@ -151,7 +157,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                     width: 170,
                     height: 170,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF6F1EE),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
@@ -196,7 +202,16 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildLabel("Name"),
-                        _buildField(nameController, hint: "Enter name"),
+                        _buildField(
+                          nameController,
+                          hint: "Enter name",
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Name is required";
+                            }
+                            return null;
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -211,6 +226,15 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                           ageController,
                           hint: "Enter age",
                           keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Age is required";
+                            }
+                            return null;
+                          },
                         ),
                       ],
                     ),
@@ -229,6 +253,12 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                         _buildLabel("Sex"),
                         DropdownButtonFormField<String>(
                           value: sex,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Sex is required";
+                            }
+                            return null;
+                          },
                           items: ["Male", "Female"]
                               .map(
                                 (e) =>
@@ -273,6 +303,12 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                         _buildField(
                           nicknameController,
                           hint: "Enter nickname/s",
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Nickname is required";
+                            }
+                            return null;
+                          },
                         ),
                       ],
                     ),
@@ -283,32 +319,70 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
 
               /// LOCATION
               _buildLabel("Location"),
-              Wrap(
-                children: locations.map((loc) {
-                  final isSelected = selectedLocations.contains(loc);
-                  return TraitChip(
-                    label: loc,
-                    selected: isSelected,
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          selectedLocations.remove(loc);
-                        } else {
-                          selectedLocations.add(loc);
-                        }
-                      });
-                    },
+              FormField<List<String>>(
+                initialValue: selectedLocations,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Please select at least one location";
+                  }
+                  return null;
+                },
+                builder: (formFieldState) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: formFieldState.hasError
+                                ? Colors.red
+                                : Colors.grey.shade200,
+                          ),
+                        ),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: locations.map((loc) {
+                            final isSelected = selectedLocations.contains(loc);
+                            return TraitChip(
+                              label: loc,
+                              selected: isSelected,
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    selectedLocations.remove(loc);
+                                  } else {
+                                    selectedLocations.add(loc);
+                                  }
+                                  formFieldState.didChange(
+                                    selectedLocations,
+                                  ); // 🔥 important
+                                });
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+
+                      /// ERROR TEXT (only shows when invalid)
+                      if (formFieldState.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Text(
+                            formFieldState.errorText!,
+                            style: const TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                    ],
                   );
-                }).toList(),
+                },
               ),
-              if (selectedLocations.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text(
-                    "Required",
-                    style: TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
               const SizedBox(height: 32),
 
               /// NEXT BUTTON

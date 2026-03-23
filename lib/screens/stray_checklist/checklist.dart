@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/stray.dart';
 import '../../models/stray_storage.dart';
 import 'checklist_card.dart';
@@ -19,11 +20,14 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     "CUB",
     "Dorms",
     "New Admin",
+    "Sotech",
     "Staff House",
     "SSF-HSU",
   ];
 
   Map<String, List<Stray>> locationStrays = {};
+  List<String> likedStrays = []; // IDs of found/liked strays
+  List<Stray> allStraysList = [];
 
   @override
   void initState() {
@@ -31,19 +35,38 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
     loadStrays();
   }
 
-  void loadStrays() async {
+  Future<void> loadStrays() async {
     final allStrays = await StrayStorage.loadStrays();
+    final prefs = await SharedPreferences.getInstance();
+    final liked = prefs.getStringList('liked_strays') ?? [];
+
     final map = <String, List<Stray>>{};
     for (var loc in locations) {
       map[loc] = allStrays.where((s) => s.locations.contains(loc)).toList();
     }
+
     setState(() {
+      allStraysList = allStrays;
+      likedStrays = liked;
       locationStrays = map;
+    });
+  }
+
+  /// Refresh liked strays when coming back from FeaturePage
+  Future<void> refreshLikes() async {
+    final prefs = await SharedPreferences.getInstance();
+    final liked = prefs.getStringList('liked_strays') ?? [];
+    setState(() {
+      likedStrays = liked;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    // Total liked / total strays
+    final totalLiked = likedStrays.length;
+    final totalStrays = allStraysList.length == 0 ? 1 : allStraysList.length;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -75,7 +98,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    "${locationStrays.values.where((l) => l.isNotEmpty).length}/${locations.length}",
+                    "$totalLiked/$totalStrays",
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -94,17 +117,25 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 itemBuilder: (context, index) {
                   final loc = locations[index];
                   final strays = locationStrays[loc] ?? [];
+
+                  // Count how many strays in this location are liked/found
+                  final foundCount = strays
+                      .where((s) => likedStrays.contains(s.id))
+                      .length;
+
                   return ChecklistCard(
                     title: loc,
-                    completed: strays.length, // all pets found
-                    total: strays.length > 0 ? strays.length : 1, // avoid 0/0
-                    onTap: () {
-                      Navigator.push(
+                    completed: foundCount,
+                    total: strays.isEmpty ? 1 : strays.length,
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => DetailScreen(title: loc),
                         ),
                       );
+                      // Refresh likes after returning
+                      await refreshLikes();
                     },
                   );
                 },

@@ -34,6 +34,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
 
     // CREATE OBJECT
     final stray = Stray(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       age: age,
       sex: sex,
@@ -210,6 +211,7 @@ class _MultilineField extends StatelessWidget {
       style: const TextStyle(fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.all(14),
