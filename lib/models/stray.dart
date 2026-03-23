@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class Stray {
+  final String id;
   final String name;
   final String age;
   final String sex;
@@ -12,6 +13,7 @@ class Stray {
   final String vaccination;
 
   Stray({
+    required this.id,
     required this.name,
     required this.age,
     required this.sex,
@@ -25,6 +27,7 @@ class Stray {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'name': name,
       'age': age,
       'sex': sex,
@@ -39,6 +42,7 @@ class Stray {
 
   factory Stray.fromMap(Map<String, dynamic> map) {
     return Stray(
+      id: map['id'] ?? map['name'],
       name: map['name'],
       age: map['age'],
       sex: map['sex'],

@@ -21,7 +21,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: true,
       title: 'Embark!',
 
-      // === NAMED ROUTES FOR ALL SCREENS ===
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent, // 🔥 removes dark overlay
+          elevation: 0,
+          scrolledUnderElevation: 0, // 🔥 disables darkening on scroll
+        ),
+      ),
+
       initialRoute: '/',
 
       routes: {

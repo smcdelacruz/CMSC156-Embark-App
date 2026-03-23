@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:like_button/like_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/stray.dart';
 import '../../widgets/feature_page_stats.dart';
 
@@ -20,6 +21,20 @@ class FeaturePage extends StatefulWidget {
 
 class _FeaturePageState extends State<FeaturePage> {
   bool isLiked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLikeState();
+  }
+
+  Future<void> _loadLikeState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final likedList = prefs.getStringList('liked_strays') ?? [];
+    setState(() {
+      isLiked = likedList.contains(widget.stray.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +250,25 @@ class _FeaturePageState extends State<FeaturePage> {
               ),
               child: LikeButton(
                 size: 34,
+                isLiked: isLiked,
+                onTap: (bool currentLiked) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final liked = prefs.getStringList('liked_strays') ?? [];
+
+                  setState(() {
+                    if (currentLiked) {
+                      liked.remove(widget.stray.id);
+                      isLiked = false;
+                    } else {
+                      liked.add(widget.stray.id);
+                      isLiked = true;
+                    }
+                  });
+
+                  await prefs.setStringList('liked_strays', liked);
+
+                  return !currentLiked; // ✅ return the new like state
+                },
                 likeBuilder: (isLiked) {
                   return Icon(
                     isLiked ? Icons.favorite : Icons.favorite_border,
