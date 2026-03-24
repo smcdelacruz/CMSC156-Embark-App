@@ -57,6 +57,9 @@ class ConfirmSubmitScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     await onConfirm();
+
+                    if(!context.mounted) return;
+                    
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (_) => const SuccessScreen()),

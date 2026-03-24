@@ -65,7 +65,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   Widget build(BuildContext context) {
     // Total liked / total strays
     final totalLiked = likedStrays.length;
-    final totalStrays = allStraysList.length == 0 ? 1 : allStraysList.length;
+    final totalStrays = allStraysList.isEmpty ? 1 : allStraysList.length;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),

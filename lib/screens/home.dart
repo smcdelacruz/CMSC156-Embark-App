@@ -1,7 +1,7 @@
-import 'dart:io';
+// import 'dart:io'; 
 import 'package:cmsc156_embark_app/models/stray_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'feature_page/feature_page.dart';
 import 'search.dart';
 import '../widgets/stray_card.dart';
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> loadStrays() async {
-    final prefs = await SharedPreferences.getInstance();
+    // final prefs = await SharedPreferences.getInstance();
     // final data = prefs.getStringList('stray_list') ?? [];
     final activeStrays = await StrayStorage.loadActiveStrays();
 
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: 2, // 2 cards per row
                           crossAxisSpacing: 12, // horizontal space between cards
                           mainAxisSpacing: 12, // vertical space between rows
-                          childAspectRatio: 0.70, // card height
+                          childAspectRatio: 0.70, // card height relative to width
                         ),
                         itemCount: strays.length,
                         itemBuilder: (context, index) {

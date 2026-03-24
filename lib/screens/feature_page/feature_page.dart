@@ -118,7 +118,7 @@ class _FeaturePageState extends State<FeaturePage> {
 
               onDelete: () {
                 showDeleteDialog(context, widget.stray);
-                print("Delete forever clicked");
+                debugPrint("Delete forever clicked");
               },
             ),
           ),
