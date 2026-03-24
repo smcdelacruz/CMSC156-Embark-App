@@ -58,9 +58,15 @@ class ConfirmSubmitScreen extends StatelessWidget {
                   onPressed: () async {
                     await onConfirm();
 
-                    if(!context.mounted) return;
-                    
-                    Navigator.pushReplacement(
+                    if (!context.mounted) return;
+
+                    // Close dialog + AddEntry screens
+                    Navigator.pop(context); // close dialog
+                    Navigator.pop(context); // close Step2
+                    Navigator.pop(context); // close Step1
+
+                    // Optional: Show SuccessScreen as overlay
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const SuccessScreen()),
                     );

@@ -38,12 +38,9 @@ class _SearchScreenState extends State<SearchScreen> {
       filteredStrays = widget.strays.where((stray) {
         final name = stray.name.toLowerCase();
         final nickname = stray.nickname.toLowerCase();
-
         return name.contains(query) || nickname.contains(query);
       }).toList();
     });
-
-    saveSearch(query);
   }
 
   Future<void> loadRecentSearches() async {
@@ -118,13 +115,17 @@ class _SearchScreenState extends State<SearchScreen> {
 
                           return StrayCard(
                             stray: stray,
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => FeaturePage(stray: stray),
                                 ),
                               );
+
+                              setState(() {
+                                filterSearch(); // reapply filter
+                              });
                             },
                           );
                         },
