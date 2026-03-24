@@ -11,7 +11,7 @@ class StrayStorage {
 
   /// 🔹 Step 3: Ensure writable JSON exists
   static Future<File> getDatabaseFile() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getApplicationSupportDirectory();
     final folder = Directory('${dir.path}/$_folderName');
 
     if (!await folder.exists()) {
