@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/app_color.dart';
 import '../../models/stray.dart';
+import '../../models/stray_storage.dart';
 import '../../models/temp_stray_form.dart';
 import 'confirm_submit.dart';
+
 // This is the second step of the Add Entry flow, where users input additional details about the stray.
 class AddEntryStep2 extends StatefulWidget {
   final StrayForm form;
@@ -23,9 +24,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
     super.initState();
   }
 
-  Future<void> _saveToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-
+  Future<void> _saveToJson() async {
     final stray = Stray(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: widget.form.name,
@@ -39,9 +38,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
       vaccination: widget.form.vaccination,
     );
 
-    final List<String> strayList = prefs.getStringList('stray_list') ?? [];
-    strayList.add(stray.toJson());
-    await prefs.setStringList('stray_list', strayList);
+    await StrayStorage.addStray(stray);
   }
 
   @override
@@ -161,8 +158,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
 
                   showDialog(
                     context: context,
-                    builder: (_) =>
-                        ConfirmSubmitScreen(onConfirm: _saveToPrefs),
+                    builder: (_) => ConfirmSubmitScreen(onConfirm: _saveToJson),
                   );
                 },
                 child: const Text(

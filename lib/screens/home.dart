@@ -1,9 +1,11 @@
-// import 'dart:io'; 
-import 'package:cmsc156_embark_app/models/stray_storage.dart';
+import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'feature_page/feature_page.dart';
 import 'search.dart';
+import '../models/stray_storage.dart';
 import '../widgets/stray_card.dart';
 import '../models/stray.dart';
 
@@ -18,9 +20,77 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Stray> strays = [];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     loadStrays();
+  }
+
+  // Export current stray list
+  Future<void> _exportStrays() async {
+    try {
+      final file = await StrayStorage.getDatabaseFile();
+
+      if (await file.exists()) {
+        // Get device Downloads directory
+        final downloadsDir = await getDownloadsDirectory();
+
+        if (downloadsDir == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cannot access Downloads folder')),
+          );
+          return;
+        }
+
+        // Create a copy of your JSON file in Downloads
+        final exportFile = File('${downloadsDir.path}/stray_list.json');
+        await file.copy(exportFile.path);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Exported to ${exportFile.path}')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No stray entries to export!')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to export: $e')));
+    }
+  }
+
+  // Import a stray JSON file
+  Future<void> _importStrays() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
+      final content = await file.readAsString();
+
+      try {
+        final List<dynamic> jsonList = jsonDecode(content);
+        final strays = jsonList.map((e) => Stray.fromMap(e)).toList();
+
+        await StrayStorage.saveStrays(strays);
+
+        // Reload HomeScreen list
+        loadStrays();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Imported ${strays.length} entries successfully!'),
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to import JSON: $e')));
+      }
+    }
   }
 
   Future<void> loadStrays() async {
@@ -67,6 +137,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 20),
 
+              Row(
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _exportStrays,
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text("Export"),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    onPressed: _importStrays,
+                    icon: const Icon(Icons.download),
+                    label: const Text("Import"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               /// SEARCH
               GestureDetector(
                 onTap: () {
@@ -107,13 +194,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )
                     : GridView.builder(
-                      padding: const EdgeInsets.only(bottom: 20), 
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // 2 cards per row
-                          crossAxisSpacing: 12, // horizontal space between cards
-                          mainAxisSpacing: 12, // vertical space between rows
-                          childAspectRatio: 0.70, // card height relative to width
-                        ),
+                        padding: const EdgeInsets.only(bottom: 20),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 cards per row
+                              crossAxisSpacing:
+                                  12, // horizontal space between cards
+                              mainAxisSpacing:
+                                  12, // vertical space between rows
+                              childAspectRatio:
+                                  0.70, // card height relative to width
+                            ),
                         itemCount: strays.length,
                         itemBuilder: (context, index) {
                           final stray = strays[index];

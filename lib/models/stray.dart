@@ -46,19 +46,20 @@ class Stray {
   factory Stray.fromMap(Map<String, dynamic> map) {
     return Stray(
       id: map['id'] ?? map['name'],
-      name: map['name'],
-      age: map['age'],
-      sex: map['sex'],
-      nickname: map['nickname'],
-      locations: List<String>.from(map['locations']),
-      imagePath: map['imagePath'],
-      temperament: map['temperament'],
-      deworming: map['deworming'],
-      vaccination: map['vaccination'],
+      name: map['name'] ?? '',
+      age: map['age'] ?? '',
+      sex: map['sex'] ?? '',
+      nickname: map['nickname'] ?? '',
+      locations: List<String>.from(map['locations'] ?? []),
+      imagePath: map['imagePath'] ?? '',
+      temperament: map['temperament'] ?? '',
+      deworming: map['deworming'] ?? '',
+      vaccination: map['vaccination'] ?? '',
       isArchived: map['isArchived'] ?? false,
     );
   }
 
   String toJson() => jsonEncode(toMap());
+
   factory Stray.fromJson(String source) => Stray.fromMap(jsonDecode(source));
 }
