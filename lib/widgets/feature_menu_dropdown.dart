@@ -21,7 +21,7 @@ class FeatureMenuDropdown extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15)),
 
-        onSelected:(value) => (String option) {
+        onSelected:(String option) {
           if (option == 'Edit') onEdit?.call();
           if (option == 'Archive') onArchive?.call();
           if (option == 'Unarchive') onUnarchive?.call();
@@ -52,11 +52,11 @@ class FeatureMenuDropdown extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.delete_rounded, 
-                      color: Colors.black54, 
+                      color: Colors.red, 
                       size: 18
                     ),
                     SizedBox(width: 8),
-                    Text('Delete forever'),
+                    Text('Delete forever', style: TextStyle(color: Colors.redAccent)),
                   ],
                 ),
               ),
@@ -85,11 +85,13 @@ class FeatureMenuDropdown extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.archive_rounded, 
-                      color: Colors.black54, 
-                      size: 18
+                      color: Colors.red, 
+                      size: 18,
+                      
                     ),
+
                     SizedBox(width: 8),
-                    Text('Archive'),
+                    Text('Archive', style: TextStyle(color: Colors.redAccent)),
                   ],
                 ),
               ),

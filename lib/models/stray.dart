@@ -11,6 +11,7 @@ class Stray {
   final String temperament;
   final String deworming;
   final String vaccination;
+  final bool isArchived;
 
   Stray({
     required this.id,
@@ -23,6 +24,7 @@ class Stray {
     required this.temperament,
     required this.deworming,
     required this.vaccination,
+    this.isArchived = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +39,7 @@ class Stray {
       'temperament': temperament,
       'deworming': deworming,
       'vaccination': vaccination,
+      'isArchived': isArchived,
     };
   }
 
@@ -52,6 +55,7 @@ class Stray {
       temperament: map['temperament'],
       deworming: map['deworming'],
       vaccination: map['vaccination'],
+      isArchived: map['isArchived'] ?? false,
     );
   }
 

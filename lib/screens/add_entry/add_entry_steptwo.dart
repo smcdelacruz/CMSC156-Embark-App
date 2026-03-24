@@ -4,7 +4,7 @@ import '../../widgets/app_color.dart';
 import '../../models/stray.dart';
 import '../../models/temp_stray_form.dart';
 import 'confirm_submit.dart';
-
+// This is the second step of the Add Entry flow, where users input additional details about the stray.
 class AddEntryStep2 extends StatefulWidget {
   final StrayForm form;
   const AddEntryStep2({super.key, required this.form});
