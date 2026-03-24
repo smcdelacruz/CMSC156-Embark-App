@@ -106,7 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(color: Colors.black54),
                         ),
                       )
-                    : ListView.builder(
+                    : GridView.builder(
+                      padding: const EdgeInsets.only(bottom: 20), 
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // 2 cards per row
+                          crossAxisSpacing: 12, // horizontal space between cards
+                          mainAxisSpacing: 12, // vertical space between rows
+                          childAspectRatio: 0.70, // card height
+                        ),
                         itemCount: strays.length,
                         itemBuilder: (context, index) {
                           final stray = strays[index];

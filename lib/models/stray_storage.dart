@@ -24,13 +24,13 @@ class StrayStorage {
     return allStrays.where((s) => s.locations.contains(location)).toList();
   }
 
-  /// Retrieves all strays that are not archived for Home Screen display
+  /// Retrieves all strays that are NOT ARCHIVED for HOME SCREEN display
   static Future<List<Stray>> loadActiveStrays() async {
     final allStrays = await loadStrays();
     return allStrays.where((s) => !s.isArchived).toList();
   }
 
-  /// Retrieves all strays that are archived for Archive Screen display
+  /// Retrieves all strays that are ARCHIVED for ARCHIVE SCREEN display
   static Future<List<Stray>> loadArchivedStrays() async {
     final allStrays = await loadStrays();
     return allStrays.where((s) => s.isArchived).toList();
@@ -46,5 +46,14 @@ class StrayStorage {
       allStrays[index] = updatedStray;
       await saveStrays(allStrays);
     }
+  }
+  
+  /// Permanently deletes a stray from the list by matching the id and 
+  /// saves the updated list back to SharedPreferences.
+  static Future<void> deleteStray(String id) async {
+    List<Stray> allStrays = await loadStrays();
+    allStrays.removeWhere((s) => s.id == id);     // Remove the stray with the matching id
+    
+    await saveStrays(allStrays);
   }
 }

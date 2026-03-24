@@ -1,5 +1,5 @@
 /* This is the Feature Page that shows all the details of a specific pet entry. 
-* It includes a large background image, pet details, and an "Edit" and "Archive" options.
+** It includes a large background image, pet details, and an "Edit" and "Archive" options.
 */
 
 import 'dart:io';
@@ -117,48 +117,10 @@ class _FeaturePageState extends State<FeaturePage> {
               },
 
               onDelete: () {
-                // TODO: Delete forever logic (usually involves removing from the list entirely)
+                showDeleteDialog(context, widget.stray);
                 print("Delete forever clicked");
               },
             ),
-            // child: CircleAvatar(
-            //   backgroundColor: const Color(0xFFF9DCC4),
-            //   child: PopupMenuButton<String>(
-            //     icon: const Icon(Icons.more_horiz),
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(15),
-            //     ),
-            //     onSelected: (choice) {
-            //       if (choice == 'Edit') {
-            //         // TODO: implement edit
-            //       } else if (choice == 'Archive') {
-            //         showArchiveDialog(context);
-            //       }
-            //     },
-            //     itemBuilder: (_) => const [
-            //       PopupMenuItem(
-            //         value: 'Edit',
-            //         child: Row(
-            //           children: [
-            //             Icon(Icons.edit_outlined),
-            //             SizedBox(width: 8),
-            //             Text('Edit'),
-            //           ],
-            //         ),
-            //       ),
-            //       PopupMenuItem(
-            //         value: 'Archive',
-            //         child: Row(
-            //           children: [
-            //             Icon(Icons.archive_outlined, color: Colors.red),
-            //             SizedBox(width: 8),
-            //             Text('Archive', style: TextStyle(color: Colors.red)),
-            //           ],
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
           ),
 
           /// === CONTENT ===
@@ -413,7 +375,7 @@ class _FeaturePageState extends State<FeaturePage> {
   }
 }
 
-/// OPTIONAL (keep your existing one if you already have it)
+/// ARCHIVE DIALOG
 void showArchiveDialog(BuildContext context, Stray stray) {
   showDialog(
     context: context,
@@ -454,6 +416,42 @@ void showArchiveDialog(BuildContext context, Stray stray) {
             }
           },
           child: const Text("Archive", style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    ),
+  );
+}
+
+/// DELETE DIALOG
+/// Dialog for permanently deleting a stray
+void showDeleteDialog(BuildContext parentContext, Stray stray) {
+  showDialog(
+    context: parentContext,
+    builder: (dialogContext) => AlertDialog(
+      title: const Text("Delete Forever", style: TextStyle(color: Colors.red)),
+      content: const Text("Are you sure you want to permanently delete this entry? This action cannot be undone."),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext), // Close just the dialog
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () async {
+            // 1. Close the dialog
+            Navigator.pop(dialogContext); 
+            
+            // 2. Delete the stray from the database entirely
+            await StrayStorage.deleteStray(stray.id);
+            
+            // 3. Pop the FeaturePage to return to the Archive list
+            if (parentContext.mounted) {
+               Navigator.pop(parentContext);
+            }
+          },
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.red.withValues(alpha: 0.1), // light red background
+          ),
+          child: const Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
         ),
       ],
     ),
