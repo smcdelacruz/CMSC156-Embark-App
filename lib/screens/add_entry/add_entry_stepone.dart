@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'add_entry_steptwo.dart';
 import '../../widgets/app_color.dart';
 import '../../widgets/trait_chip.dart';
-
+// This is the first step of the Add Entry flow, where users input basic details about the stray.
 class AddEntryStep1 extends StatefulWidget {
   const AddEntryStep1({super.key});
 

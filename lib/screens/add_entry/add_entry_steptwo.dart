@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/app_color.dart';
 import '../../models/stray.dart';
 import 'confirm_submit.dart';
-
+// This is the second step of the Add Entry flow, where users input additional details about the stray.
 class AddEntryStep2 extends StatefulWidget {
   const AddEntryStep2({super.key});
 

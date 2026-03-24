@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../models/stray.dart';
+import '../../models/stray_storage.dart';
+import '../../widgets/stray_card.dart';
+import 'feature_page/feature_page.dart';
 
+/// This screen displays all archived stray entries in a list format. 
+/// It retrieves the archived strays from StrayStorage and shows them using StrayCard widgets. 
+/// Tapping on an archived entry navigates to the FeaturePage with the isArchivedView flag set to true, 
+/// allowing users to view details and unarchive if desired.
 class ArchiveEntryScreen extends StatefulWidget {
   const ArchiveEntryScreen({super.key});
 
@@ -8,45 +16,72 @@ class ArchiveEntryScreen extends StatefulWidget {
 }
 
 class _ArchiveEntryScreenState extends State<ArchiveEntryScreen> {
+  List<Stray> archivedStrays = []; // State variable to hold archived strays
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadArchivedStrays(); // Load archived strays when the screen is first displayed
+  }
+
+  Future<void> _loadArchivedStrays() async {
+    final strays = await StrayStorage.loadArchivedStrays();
+    setState(() {
+      archivedStrays = strays;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Archive Entry")),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-        // PLACEHOLDER: List of Added Strays
-              child: ListView.builder(
-                itemCount: 2, 
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.only(bottom: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    // ListTile is a great temporary widget for lists
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(12),
-                      leading: const CircleAvatar(
-                        backgroundColor: Color(0xFFF9DCC4),
-                        child: Icon(Icons.pets, color: Colors.black54),
-                      ),
-                      title: Text(
-                        "Stray Buddy #${index + 1}",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: const Text("Spotted near the library..."),
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      appBar: AppBar(
+        title: const Text("Archive Entry"),
+        backgroundColor: Colors.white,
+        elevation: 0, 
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          
+          // Checks if the list is empty first
+          child: archivedStrays.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No archived entries.",
+                    style: TextStyle(color: Colors.black54, fontSize: 16),
+                  ),
+                )
+                
+              : ListView.builder(
+                  itemCount: archivedStrays.length, 
+                  itemBuilder: (context, index) {
+                    final stray = archivedStrays[index];
+
+                    return StrayCard(
+                      stray: stray,
                       
-                      // Routing to the Feature Page
-                      onTap: () {
-                        Navigator.pushNamed(context, '/feature');
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FeaturePage(
+                              stray: stray,
+                              isArchivedView: true, 
+                            ),
+                          ),
+                        );
+                        
+                        // Reload archived strays when coming back from the feature page in case of any changes
+                        _loadArchivedStrays();
                       },
-                    ),
-                  );
-                },
-              ),
-            
-    ),);
+                    );
+                  },
+                ),
+        ),
+      ),
+    );
   }
 }

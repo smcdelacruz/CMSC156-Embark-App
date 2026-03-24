@@ -8,12 +8,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/stray.dart';
+import '../../models/stray_storage.dart';
+import '../../widgets/feature_menu_dropdown.dart';
 import '../../widgets/feature_page_stats.dart';
 
 class FeaturePage extends StatefulWidget {
   final Stray stray;
+  final bool isArchivedView; // New parameter to indicate if this page is being viewed from the Archive
 
-  const FeaturePage({super.key, required this.stray});
+  const FeaturePage({
+    super.key, 
+    required this.stray, 
+    this.isArchivedView = false});  // Default to false for the Home page
 
   @override
   State<FeaturePage> createState() => _FeaturePageState();
@@ -75,44 +81,84 @@ class _FeaturePageState extends State<FeaturePage> {
           Positioned(
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
-            child: CircleAvatar(
-              backgroundColor: const Color(0xFFF9DCC4),
-              child: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_horiz),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                onSelected: (choice) {
-                  if (choice == 'Edit') {
-                    // TODO: implement edit
-                  } else if (choice == 'Archive') {
-                    showArchiveDialog(context);
-                  }
-                },
-                itemBuilder: (_) => const [
-                  PopupMenuItem(
-                    value: 'Edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit_outlined),
-                        SizedBox(width: 8),
-                        Text('Edit'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'Archive',
-                    child: Row(
-                      children: [
-                        Icon(Icons.archive_outlined, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text('Archive', style: TextStyle(color: Colors.red)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            child: FeatureMenuDropdown(
+              isArchived: widget.isArchivedView, 
+              
+              onEdit: () {
+                // TODO: Navigate to Edit screen
+              },
+              
+              onArchive: () {
+                // Pass the current stray to the dialog
+                showArchiveDialog(context, widget.stray); 
+              },
+
+              onUnarchive: () async {
+                // Rebuild the object with isArchived = false
+                final activeStray = Stray(
+                  id: widget.stray.id,
+                  name: widget.stray.name,
+                  age: widget.stray.age,
+                  sex: widget.stray.sex,
+                  nickname: widget.stray.nickname,
+                  locations: widget.stray.locations,
+                  imagePath: widget.stray.imagePath,
+                  temperament: widget.stray.temperament,
+                  deworming: widget.stray.deworming,
+                  vaccination: widget.stray.vaccination,
+                  isArchived: false, 
+                );
+                
+                await StrayStorage.updateStray(activeStray);
+                
+                if (context.mounted) {
+                  Navigator.pop(context); // Go back to Archive Screen
+                }
+              },
+
+              onDelete: () {
+                // TODO: Delete forever logic (usually involves removing from the list entirely)
+                print("Delete forever clicked");
+              },
             ),
+            // child: CircleAvatar(
+            //   backgroundColor: const Color(0xFFF9DCC4),
+            //   child: PopupMenuButton<String>(
+            //     icon: const Icon(Icons.more_horiz),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(15),
+            //     ),
+            //     onSelected: (choice) {
+            //       if (choice == 'Edit') {
+            //         // TODO: implement edit
+            //       } else if (choice == 'Archive') {
+            //         showArchiveDialog(context);
+            //       }
+            //     },
+            //     itemBuilder: (_) => const [
+            //       PopupMenuItem(
+            //         value: 'Edit',
+            //         child: Row(
+            //           children: [
+            //             Icon(Icons.edit_outlined),
+            //             SizedBox(width: 8),
+            //             Text('Edit'),
+            //           ],
+            //         ),
+            //       ),
+            //       PopupMenuItem(
+            //         value: 'Archive',
+            //         child: Row(
+            //           children: [
+            //             Icon(Icons.archive_outlined, color: Colors.red),
+            //             SizedBox(width: 8),
+            //             Text('Archive', style: TextStyle(color: Colors.red)),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
           ),
 
           /// === CONTENT ===
@@ -368,7 +414,7 @@ class _FeaturePageState extends State<FeaturePage> {
 }
 
 /// OPTIONAL (keep your existing one if you already have it)
-void showArchiveDialog(BuildContext context) {
+void showArchiveDialog(BuildContext context, Stray stray) {
   showDialog(
     context: context,
     builder: (_) => AlertDialog(
@@ -379,10 +425,33 @@ void showArchiveDialog(BuildContext context) {
           onPressed: () => Navigator.pop(context),
           child: const Text("Cancel"),
         ),
+        ///
         TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            // TODO: archive logic
+          onPressed: () async {
+            Navigator.pop(context); // Close the dialog
+            
+            // Set the stray to archived
+            final archivedStray = Stray(
+              id: stray.id,
+              name: stray.name,
+              age: stray.age,
+              sex: stray.sex,
+              nickname: stray.nickname,
+              locations: stray.locations,
+              imagePath: stray.imagePath,
+              temperament: stray.temperament,
+              deworming: stray.deworming,
+              vaccination: stray.vaccination,
+              isArchived: true, 
+            );
+            
+            // Save it to database
+            await StrayStorage.updateStray(archivedStray);
+            
+            // Pop the FeaturePage so the user returns to the Home list
+            if (context.mounted) {
+               Navigator.pop(context);
+            }
           },
           child: const Text("Archive", style: TextStyle(color: Colors.red)),
         ),

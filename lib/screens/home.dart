@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cmsc156_embark_app/models/stray_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'feature_page/feature_page.dart';
@@ -24,10 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> loadStrays() async {
     final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getStringList('stray_list') ?? [];
+    // final data = prefs.getStringList('stray_list') ?? [];
+    final activeStrays = await StrayStorage.loadActiveStrays();
 
     setState(() {
-      strays = data.map((e) => Stray.fromJson(e)).toList();
+      // strays = data.map((e) => Stray.fromJson(e)).toList();
+      strays = activeStrays;
     });
   }
 
@@ -54,8 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: Colors.black54,
                       size: 30,
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/archive');
+                    onPressed: () async {
+                      await Navigator.pushNamed(context, '/archive');
+                      loadStrays(); // Refresh the list when coming back from the archive
                     },
                   ),
                 ],
@@ -109,13 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           return StrayCard(
                             stray: stray,
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              await Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => FeaturePage(stray: stray),
                                 ),
                               );
+                              loadStrays();
                             },
                           );
                         },
