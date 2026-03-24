@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/temp_stray_form.dart';
 import 'package:flutter/services.dart';
 import 'add_entry_steptwo.dart';
 import '../../widgets/app_color.dart';
@@ -16,6 +17,7 @@ class AddEntryStep1 extends StatefulWidget {
 
 class _AddEntryStep1State extends State<AddEntryStep1> {
   final _formKey = GlobalKey<FormState>();
+  final form = StrayForm();
 
   final nameController = TextEditingController();
   final ageController = TextEditingController();
@@ -46,16 +48,6 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     }
   }
 
-  Future<void> saveToPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', nameController.text);
-    await prefs.setString('age', ageController.text);
-    await prefs.setString('nicknames', nicknameController.text);
-    await prefs.setString('sex', sex ?? '');
-    await prefs.setStringList('locations', selectedLocations);
-    if (_image != null) await prefs.setString('imagePath', _image!.path);
-  }
-
   Widget _buildLabel(String text) => Padding(
     padding: const EdgeInsets.only(bottom: 6),
     child: Text(
@@ -82,6 +74,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     style: const TextStyle(fontSize: 14),
     decoration: InputDecoration(
       hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.all(14),
@@ -151,44 +144,70 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
             children: [
               /// IMAGE UPLOAD
               Center(
-                child: GestureDetector(
-                  onTap: pickImage,
-                  child: Container(
-                    width: 170,
-                    height: 170,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.grey.shade300),
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: pickImage,
+                      child: Container(
+                        width: 170,
+                        height: 170,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: _image == null
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 70,
+                                    height: 70,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.shade200,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(Icons.image, size: 32),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    "Upload your photo here.",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(18),
+                                child: Image.file(_image!, fit: BoxFit.cover),
+                              ),
+                      ),
                     ),
-                    child: _image == null
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.image, size: 32),
-                              ),
-                              const SizedBox(height: 10),
-                              const Text(
-                                "Upload your photo here.",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          )
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: Image.file(_image!, fit: BoxFit.cover),
+
+                    // Remove button
+                    if (_image != null)
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: GestureDetector(
+                          onTap: () =>
+                              setState(() => _image = null), // 🔹 removes photo
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
-                  ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),
@@ -343,8 +362,8 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                           ),
                         ),
                         child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
+                          spacing: 4,
+                          runSpacing: 4,
                           children: locations.map((loc) {
                             final isSelected = selectedLocations.contains(loc);
                             return TraitChip(
@@ -397,13 +416,19 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () async {
+                  onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      await saveToPrefs();
+                      form.name = nameController.text;
+                      form.age = ageController.text;
+                      form.sex = sex ?? '';
+                      form.nickname = nicknameController.text;
+                      form.locations = selectedLocations;
+                      form.imagePath = _image?.path ?? '';
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const AddEntryStep2(),
+                          builder: (_) => AddEntryStep2(form: form),
                         ),
                       );
                     }

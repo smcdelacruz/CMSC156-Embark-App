@@ -15,7 +15,7 @@ class StrayCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFFFB5A7),
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
@@ -63,13 +63,13 @@ class StrayCard extends StatelessWidget {
                         stray.name.isEmpty ? "Unnamed" : stray.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 20,
                         ),
                       ),
                       Text(
-                        stray.age.isEmpty ? "" : stray.age,
+                        stray.age.isEmpty ? "" : "~${stray.age} years",
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: Colors.black54,
                         ),
                       ),
@@ -81,7 +81,15 @@ class StrayCard extends StatelessWidget {
                   /// SEX
                   Row(
                     children: [
-                      const Icon(Icons.female, size: 14, color: Colors.pink),
+                      Icon(
+                        stray.sex.toLowerCase() == "male"
+                            ? Icons.male
+                            : stray.sex.toLowerCase() == "female"
+                            ? Icons.female
+                            : Icons.help_outline,
+                        size: 20,
+                        color: Colors.black,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         stray.sex.isEmpty ? "Unknown" : stray.sex,
@@ -97,8 +105,8 @@ class StrayCard extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.location_on,
-                        size: 14,
-                        color: Colors.redAccent,
+                        size: 20,
+                        color: Colors.black,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -108,7 +116,7 @@ class StrayCard extends StatelessWidget {
                               : stray.locations.join(", "),
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.black54,
+                            color: Colors.black,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),

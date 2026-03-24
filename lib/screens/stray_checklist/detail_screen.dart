@@ -73,7 +73,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: isLiked ? Colors.red.shade100 : Colors.white,
+                      color: const Color(0xFFFFB5A7), // Salmon card
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
                         BoxShadow(
@@ -110,78 +110,26 @@ class _DetailScreenState extends State<DetailScreen> {
                           ),
                         ),
 
-                        /// CONTENT
+                        /// NAME + LIKE
                         Padding(
                           padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              /// NAME + AGE
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    pet.name.isEmpty ? "Unnamed" : pet.name,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  Text(
-                                    pet.age.isEmpty ? "" : pet.age,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                pet.name.isEmpty ? "Unnamed" : pet.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                ),
                               ),
-                              const SizedBox(height: 4),
-
-                              /// SEX
-                              Row(
-                                children: [
-                                  Icon(
-                                    pet.sex.toLowerCase() == "female"
-                                        ? Icons.female
-                                        : Icons.male,
-                                    size: 14,
-                                    color: pet.sex.toLowerCase() == "female"
-                                        ? Colors.pink
-                                        : Colors.blue,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    pet.sex.isEmpty ? "Unknown" : pet.sex,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-
-                              /// LOCATION
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    size: 14,
-                                    color: Colors.redAccent,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      pet.locations.isEmpty
-                                          ? "No location"
-                                          : pet.locations.join(", "),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black54,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                              Icon(
+                                Icons.favorite,
+                                color: isLiked
+                                    ? const Color(0xFFF9DCC4)
+                                    : Colors.grey,
+                                size: 24,
                               ),
                             ],
                           ),
