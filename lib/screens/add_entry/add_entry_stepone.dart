@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/temp_stray_form.dart';
 import 'package:flutter/services.dart';
 import 'add_entry_steptwo.dart';
@@ -89,7 +89,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
-          color: AppColors.primary.withOpacity(0.6),
+          color: AppColors.primary.withValues(alpha: 0.6),
           width: 1.5,
         ),
       ),
@@ -271,7 +271,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       children: [
                         _buildLabel("Sex"),
                         DropdownButtonFormField<String>(
-                          value: sex,
+                          initialValue: sex,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Sex is required";
@@ -304,7 +304,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(
-                                color: AppColors.primary.withOpacity(0.6),
+                                color: AppColors.primary.withValues(alpha: 0.6),
                                 width: 1.5,
                               ),
                             ),

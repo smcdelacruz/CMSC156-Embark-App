@@ -53,93 +53,102 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
       body: pets.isEmpty
           ? const Center(child: Text("No pets in this location"))
-          : ListView.builder(
+          : Padding(
               padding: const EdgeInsets.all(16),
-              itemCount: pets.length,
-              itemBuilder: (context, index) {
-                final pet = pets[index];
-                final isLiked = likedStrays.contains(pet.id);
+              child: GridView.builder(
+                  padding: const EdgeInsets.only(bottom: 20), 
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // 2 cards per row
+                              crossAxisSpacing: 12, // horizontal space between cards
+                              mainAxisSpacing: 12, // vertical space between rows
+                              childAspectRatio: 0.70, // card height
+                            ),
+                  itemCount: pets.length,
+                  itemBuilder: (context, index) {
+                    final pet = pets[index];
+                    final isLiked = likedStrays.contains(pet.id);
 
-                return GestureDetector(
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => FeaturePage(stray: pet),
-                      ),
-                    );
-                    await refreshLikes();
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFFB5A7), // Salmon card
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        /// IMAGE
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(18),
+                    return GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => FeaturePage(stray: pet),
                           ),
-                          child: Container(
-                            height: 120,
-                            width: double.infinity,
-                            color: Colors.grey[300],
-                            child: pet.imagePath.isNotEmpty
-                                ? Image.file(
-                                    File(pet.imagePath),
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Center(
-                                    child: Icon(
-                                      Icons.pets,
-                                      size: 30,
-                                      color: Colors.black54,
+                        );
+                        await refreshLikes();
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFB5A7), // Salmon card
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /// IMAGE
+                            ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(18),
+                              ),
+                              child: Container(
+                                height: 230,
+                                width: double.infinity,
+                                color: Colors.grey[300],
+                                child: pet.imagePath.isNotEmpty
+                                    ? Image.file(
+                                        File(pet.imagePath),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const Center(
+                                        child: Icon(
+                                          Icons.pets,
+                                          size: 30,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                              ),
+                            ),
+
+                            /// NAME + LIKE
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    pet.name.isEmpty ? "Unnamed" : pet.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.black,
                                     ),
                                   ),
-                          ),
-                        ),
-
-                        /// NAME + LIKE
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                pet.name.isEmpty ? "Unnamed" : pet.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                ),
+                                  Icon(
+                                    Icons.favorite,
+                                    color: isLiked
+                                        ? const Color(0xFFF9DCC4)
+                                        : Colors.grey,
+                                    size: 24,
+                                  ),
+                                ],
                               ),
-                              Icon(
-                                Icons.favorite,
-                                color: isLiked
-                                    ? const Color(0xFFF9DCC4)
-                                    : Colors.grey,
-                                size: 24,
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                      ),
+                    );
+                  },
+                ),
+          )
     );
   }
 }

@@ -55,7 +55,15 @@ class _ArchiveEntryScreenState extends State<ArchiveEntryScreen> {
                   ),
                 )
                 
-              : ListView.builder(
+                // 2 Cards per row will show if there are archived entries
+              : GridView.builder(
+                  padding: const EdgeInsets.only(bottom: 20), 
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 cards per row
+                    crossAxisSpacing: 12, // horizontal space between cards
+                    mainAxisSpacing: 12, // vertical space between rows
+                    childAspectRatio: 0.70, // card height
+                  ),
                   itemCount: archivedStrays.length, 
                   itemBuilder: (context, index) {
                     final stray = archivedStrays[index];

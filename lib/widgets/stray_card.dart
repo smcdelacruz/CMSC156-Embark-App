@@ -34,7 +34,7 @@ class StrayCard extends StatelessWidget {
                 top: Radius.circular(18),
               ),
               child: Container(
-                height: 120,
+                height: 230,
                 width: double.infinity,
                 color: Colors.grey[300],
                 child: stray.imagePath.isNotEmpty

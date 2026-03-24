@@ -25,11 +25,11 @@ class ChecklistCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDone
               ? const Color(0xFFFFB5A7)
-              : const Color.fromARGB(255, 219, 216, 216).withOpacity(0.7),
+              : const Color.fromARGB(255, 219, 216, 216).withValues(alpha: 0.7),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
