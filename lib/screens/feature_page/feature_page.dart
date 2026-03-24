@@ -242,42 +242,89 @@ class _FeaturePageState extends State<FeaturePage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              child: LikeButton(
-                size: 34,
-                isLiked: isLiked,
-                onTap: (bool currentLiked) async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final liked = prefs.getStringList('liked_strays') ?? [];
+              child: Center(
+                child: LikeButton(
+                  padding: EdgeInsets.zero,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  likeCountPadding: EdgeInsets.zero,
+                  bubblesColor: const BubblesColor(
+                    dotPrimaryColor: Color(0xFFF8EDEB),
+                    dotSecondaryColor: Colors.red,
+                  ),
+                  size: 34,
+                  
+                  // === ISLIKED LOGIC ===
+                  isLiked: isLiked,
+                  onTap: (bool currentLiked) async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final liked = prefs.getStringList('liked_strays') ?? [];
 
-                  setState(() {
-                    if (currentLiked) {
-                      liked.remove(widget.stray.id);
-                      isLiked = false;
-                    } else {
-                      liked.add(widget.stray.id);
-                      isLiked = true;
-                    }
-                  });
+                    setState(() {
+                      if (currentLiked) {
+                        liked.remove(widget.stray.id);
+                        isLiked = false;
+                      } else {
+                        liked.add(widget.stray.id);
+                        isLiked = true;
+                      }
+                    });
 
-                  await prefs.setStringList('liked_strays', liked);
+                    await prefs.setStringList('liked_strays', liked);
+                    return !currentLiked; 
+                  },
 
-                  return !currentLiked; // ✅ return the new like state
-                },
-                likeBuilder: (isLiked) {
-                  return Icon(
-                    isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.white,
-                  );
-                },
+                  // === UI LOGIC ===
+                  likeBuilder: (isLiked) {
+                    return SizedBox(
+                      width: 34,
+                      height: 34,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Center(
+                            child: Icon(
+                              isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+                              color: const Color(0xFFF8EDEB),
+                              size: 34,
+                            ),
+                          ),
+                          // The "+" badge
+                          if (!isLiked)
+                            Positioned(
+                              bottom: -1,
+                              right: -1,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFF08080),
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(3),
+                                child: const Text(
+                                  "+",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(0xFFF8EDEB),
+                                    height: 1.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
+          // ),
         ],
       ),
     );
