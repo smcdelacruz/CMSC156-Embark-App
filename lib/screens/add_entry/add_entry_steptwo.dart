@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../widgets/app_color.dart';
 import '../../models/stray.dart';
+import '../../models/temp_stray_form.dart';
 import 'confirm_submit.dart';
 // This is the second step of the Add Entry flow, where users input additional details about the stray.
 class AddEntryStep2 extends StatefulWidget {
-  const AddEntryStep2({super.key});
+  final StrayForm form;
+  const AddEntryStep2({super.key, required this.form});
 
   @override
   State<AddEntryStep2> createState() => _AddEntryStep2State();
@@ -24,35 +26,21 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
   Future<void> _saveToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // LOAD STEP 1 DATA
-    final name = prefs.getString('name') ?? '';
-    final age = prefs.getString('age') ?? '';
-    final sex = prefs.getString('sex') ?? '';
-    final nickname = prefs.getString('nicknames') ?? '';
-    final locations = prefs.getStringList('locations') ?? [];
-    final imagePath = prefs.getString('imagePath') ?? '';
-
-    // CREATE OBJECT
     final stray = Stray(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
-      age: age,
-      sex: sex,
-      nickname: nickname,
-      locations: locations,
-      imagePath: imagePath,
-      temperament: temperamentController.text,
-      deworming: dewormingController.text,
-      vaccination: vaccinationController.text,
+      name: widget.form.name,
+      age: widget.form.age,
+      sex: widget.form.sex,
+      nickname: widget.form.nickname,
+      locations: widget.form.locations,
+      imagePath: widget.form.imagePath,
+      temperament: widget.form.temperament,
+      deworming: widget.form.deworming,
+      vaccination: widget.form.vaccination,
     );
 
-    // GET EXISTING LIST
     final List<String> strayList = prefs.getStringList('stray_list') ?? [];
-
-    // ADD NEW ENTRY
     strayList.add(stray.toJson());
-
-    // SAVE BACK
     await prefs.setStringList('stray_list', strayList);
   }
 
@@ -165,11 +153,16 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                onPressed: () async {
-                  await _saveToPrefs(); // Save step 2 data
+                onPressed: () {
+                  // ✅ SAVE STEP 2 DATA INTO FORM
+                  widget.form.temperament = temperamentController.text;
+                  widget.form.deworming = dewormingController.text;
+                  widget.form.vaccination = vaccinationController.text;
+
                   showDialog(
                     context: context,
-                    builder: (_) => const ConfirmSubmitScreen(),
+                    builder: (_) =>
+                        ConfirmSubmitScreen(onConfirm: _saveToPrefs),
                   );
                 },
                 child: const Text(
