@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/home.dart';
-import '../screens/add_entry.dart';
+import '../screens/add_entry/add_entry_stepone.dart';
 import '../screens/stray_checklist/checklist.dart';
 
 class NavBar extends StatefulWidget {
@@ -33,7 +33,7 @@ class _NavBarState extends State<NavBar> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddEntryScreen()),
+                MaterialPageRoute(builder: (context) => AddEntryStep1()),
               );
             },
             backgroundColor: const Color(0xFFF08080),

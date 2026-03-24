@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class AddEntryScreen extends StatefulWidget {
-  const AddEntryScreen({super.key});
+class EditEntryPage extends StatefulWidget {
+  const EditEntryPage({super.key});
 
   @override
-  State<AddEntryScreen> createState() => _AddEntryScreenState();
+  State<EditEntryPage> createState() => _EditEntryPageState();
 }
 
-class _AddEntryScreenState extends State<AddEntryScreen> {
+class _EditEntryPageState extends State<EditEntryPage> {
   final _formKey = GlobalKey<FormState>();
 
   final nameController = TextEditingController();
