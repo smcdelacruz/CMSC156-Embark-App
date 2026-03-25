@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/stray.dart';
+import '../widgets/stray_image.dart';
 
 class StrayCard extends StatelessWidget {
   final Stray stray;
@@ -33,19 +34,26 @@ class StrayCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(18),
               ),
-              child: Container(
+              // child: Container(
+              //   height: 230,
+              //   width: double.infinity,
+              //   color: Colors.grey[300],
+              //   child: stray.imagePath.isNotEmpty
+              //       ? Image.file(File(stray.imagePath), fit: BoxFit.cover)
+              //       : const Center(
+              //           child: Icon(
+              //             Icons.pets,
+              //             size: 30,
+              //             color: Colors.black54,
+              //           ),
+              //         ),
+              // ),
+
+              // StrayImage handles the placeholder and the Base64 decoding automatically
+              child: StrayImage(
+                imagePath: stray.imagePath,
                 height: 230,
                 width: double.infinity,
-                color: Colors.grey[300],
-                child: stray.imagePath.isNotEmpty
-                    ? Image.file(File(stray.imagePath), fit: BoxFit.cover)
-                    : const Center(
-                        child: Icon(
-                          Icons.pets,
-                          size: 30,
-                          color: Colors.black54,
-                        ),
-                      ),
               ),
             ),
 

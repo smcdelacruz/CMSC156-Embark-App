@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
@@ -423,7 +424,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       form.name = nameController.text;
                       form.age = ageController.text;
@@ -431,6 +432,15 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       form.nickname = nicknameController.text;
                       form.locations = selectedLocations;
                       form.imagePath = _image?.path ?? '';
+
+                      // Convert image file to Base64 string before saving to form
+                      if (_image != null) {
+                        final bytes = await _image!.readAsBytes();  // reads the image file as raw bytes
+                        final base64String = base64Encode(bytes); // converts the bytes to a Base64 string
+                        form.imagePath = 'base64,$base64String';  // prefix with 'base64,' to indicate that this is a Base64-encoded image
+                      } else {
+                        form.imagePath = '';
+                      }
 
                       Navigator.push(
                         context,
