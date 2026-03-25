@@ -9,7 +9,7 @@ import 'screens/feature_page/edit_entry_one.dart'; // only once
 import 'models/stray.dart';
 import 'models/temp_stray_form.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized(); // Required before async platform calls
   runApp(const MyApp());
 }

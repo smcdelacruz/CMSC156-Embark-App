@@ -43,7 +43,11 @@ class StrayStorage {
   static Future<void> saveStrays(List<Stray> strays) async {
     final file = await getDatabaseFile();
     final jsonList = strays.map((s) => s.toMap()).toList();
-    await file.writeAsString(jsonEncode(jsonList));
+
+    const encoder = JsonEncoder.withIndent('  '); // 2 spaces
+    final prettyJson = encoder.convert(jsonList);
+
+    await file.writeAsString(prettyJson);
   }
 
   /// Add a new stray
