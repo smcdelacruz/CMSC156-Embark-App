@@ -31,7 +31,6 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     "CDH",
     "CM",
     "CUB",
-    "Dorms",
     "Dorm Area",
     "Hatchery",
     "New Admin",

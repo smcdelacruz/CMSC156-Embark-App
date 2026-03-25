@@ -29,7 +29,6 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
     "CDH",
     "CM",
     "CUB",
-    "Dorms",
     "Dorm Area",
     "Hatchery",
     "New Admin",
