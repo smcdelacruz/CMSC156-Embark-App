@@ -1,4 +1,5 @@
 class StrayForm {
+  String id = '';
   String name = '';
   String age = '';
   String sex = '';
