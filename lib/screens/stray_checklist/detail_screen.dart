@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/stray.dart';
 import '../feature_page/feature_page.dart';
 import '../../models/stray_storage.dart';
+import '../../widgets/stray_image.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title;
@@ -57,12 +58,12 @@ class _DetailScreenState extends State<DetailScreen> {
               padding: const EdgeInsets.all(16),
               child: GridView.builder(
                   padding: const EdgeInsets.only(bottom: 20), 
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // 2 cards per row
-                              crossAxisSpacing: 12, // horizontal space between cards
-                              mainAxisSpacing: 12, // vertical space between rows
-                              childAspectRatio: 0.70, // card height
-                            ),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 cards per row
+                    crossAxisSpacing: 12, // horizontal space between cards
+                    mainAxisSpacing: 12, // vertical space between rows
+                    childAspectRatio: 0.70, // card height
+                    ),
                   itemCount: pets.length,
                   itemBuilder: (context, index) {
                     final pet = pets[index];
@@ -99,22 +100,27 @@ class _DetailScreenState extends State<DetailScreen> {
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(18),
                               ),
-                              child: Container(
+                              // child: Container(
+                              //   height: 230,
+                              //   width: double.infinity,
+                              //   color: Colors.grey[300],
+                              //   child: pet.imagePath.isNotEmpty
+                              //       ? Image.file(
+                              //           File(pet.imagePath),
+                              //           fit: BoxFit.cover,
+                              //         )
+                              //       : const Center(
+                              //           child: Icon(
+                              //             Icons.pets,
+                              //             size: 30,
+                              //             color: Colors.black54,
+                              //           ),
+                              //         ),
+                              // ),
+                              child: StrayImage(
+                                imagePath: pet.imagePath,
                                 height: 230,
                                 width: double.infinity,
-                                color: Colors.grey[300],
-                                child: pet.imagePath.isNotEmpty
-                                    ? Image.file(
-                                        File(pet.imagePath),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : const Center(
-                                        child: Icon(
-                                          Icons.pets,
-                                          size: 30,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
                               ),
                             ),
 

@@ -13,6 +13,7 @@ import '../../models/stray_storage.dart';
 import '../../widgets/feature_menu_dropdown.dart';
 import '../../widgets/feature_page_stats.dart';
 import '../../widgets/dialogs.dart';
+import '../../widgets/stray_image.dart';
 
 class FeaturePage extends StatefulWidget {
   final Stray stray;
@@ -55,17 +56,26 @@ class _FeaturePageState extends State<FeaturePage> {
       body: Stack(
         children: [
           /// === IMAGE ===
+          // Positioned(
+          //   top: 0,
+          //   left: 0,
+          //   right: 0,
+          //   height: size.height * 0.45,
+          //   child: widget.stray.imagePath.isNotEmpty
+          //       ? Image.file(File(widget.stray.imagePath), fit: BoxFit.cover)
+          //       : Container(
+          //           color: Colors.grey.shade300,
+          //           child: const Icon(Icons.pets, size: 80),
+          //         ),
+          // ),
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             height: size.height * 0.45,
-            child: widget.stray.imagePath.isNotEmpty
-                ? Image.file(File(widget.stray.imagePath), fit: BoxFit.cover)
-                : Container(
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.pets, size: 80),
-                  ),
+            child: StrayImage(
+              imagePath: widget.stray.imagePath,
+            ),
           ),
 
           /// === BACK BUTTON ===
