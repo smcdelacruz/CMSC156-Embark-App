@@ -25,15 +25,21 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
   final nicknameController = TextEditingController();
 
   final List<String> locations = [
+    "Box 1",
     "CAS",
     "CFOS",
+    "CDH",
     "CM",
     "CUB",
-    "Dorms",
+    "Dorm Area",
+    "Hatchery",
     "New Admin",
+    "OWL",
     "Sotech",
     "Staff House",
+    "Teacher's Dorm",
     "SSF-HSU",
+    "Wetlab",
   ];
 
   List<String> selectedLocations = [];
@@ -241,7 +247,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel("Age"),
+                        _buildLabel("Age (Optional)"),
                         _buildField(
                           ageController,
                           hint: "Enter age",
@@ -249,12 +255,12 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Age is required";
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return "Age is required";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ],
                     ),
@@ -319,16 +325,16 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel("Nickname/s"),
+                        _buildLabel("Nickname/s (Optional)"),
                         _buildField(
                           nicknameController,
                           hint: "Enter nickname/s",
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Nickname is required";
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.trim().isEmpty) {
+                          //     return "Nickname is required";
+                          //   }
+                          //   return null;
+                          // },
                         ),
                       ],
                     ),

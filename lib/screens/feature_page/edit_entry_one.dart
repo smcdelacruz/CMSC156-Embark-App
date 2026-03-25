@@ -23,15 +23,21 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
   late final TextEditingController nicknameController;
 
   final List<String> locations = [
+    "Box 1",
     "CAS",
     "CFOS",
+    "CDH",
     "CM",
     "CUB",
-    "Dorms",
+    "Dorm Area",
+    "Hatchery",
     "New Admin",
+    "OWL",
     "Sotech",
     "Staff House",
+    "Teacher's Dorm",
     "SSF-HSU",
+    "Wetlab",
   ];
 
   late List<String> selectedLocations;
@@ -231,7 +237,7 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel("Age"),
+                        _buildLabel("Age (Optional)"),
                         _buildField(
                           ageController,
                           hint: "Enter age",
@@ -239,8 +245,8 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          validator: (v) =>
-                              v == null || v.isEmpty ? "Age is required" : null,
+                          // validator: (v) =>
+                          //     v == null || v.isEmpty ? "Age is required" : null,
                         ),
                       ],
                     ),
@@ -258,7 +264,7 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
                       children: [
                         _buildLabel("Sex"),
                         DropdownButtonFormField<String>(
-                          value: sex,
+                          initialValue: sex,
                           validator: (v) =>
                               v == null || v.isEmpty ? "Sex is required" : null,
                           items: ["Male", "Female"]
@@ -277,13 +283,13 @@ class _EditEntryStep1State extends State<EditEntryStep1> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildLabel("Nickname/s"),
+                        _buildLabel("Nickname/s (Optional)"),
                         _buildField(
                           nicknameController,
                           hint: "Enter nickname/s",
-                          validator: (v) => v == null || v.isEmpty
-                              ? "Nickname is required"
-                              : null,
+                          // validator: (v) => v == null || v.isEmpty
+                          //     ? "Nickname is required"
+                          //     : null,
                         ),
                       ],
                     ),

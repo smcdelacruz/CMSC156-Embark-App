@@ -18,6 +18,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
   final temperamentController = TextEditingController();
   final dewormingController = TextEditingController();
   final vaccinationController = TextEditingController();
+  final notesController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
       temperament: widget.form.temperament,
       deworming: widget.form.deworming,
       vaccination: widget.form.vaccination,
+      notes: widget.form.notes,
     );
 
     await StrayStorage.addStray(stray);
@@ -138,6 +140,24 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
             ),
             const SizedBox(height: 32),
 
+            /// Notes
+            const Text(
+              "Notes",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _MultilineField(
+              controller: notesController,
+              hint: "Provide additional notes",
+              minLines: 2,
+            ),
+            const SizedBox(height: 32),
+
             /// Submit button
             SizedBox(
               width: double.infinity,
@@ -155,6 +175,7 @@ class _AddEntryStep2State extends State<AddEntryStep2> {
                   widget.form.temperament = temperamentController.text;
                   widget.form.deworming = dewormingController.text;
                   widget.form.vaccination = vaccinationController.text;
+                  widget.form.notes = notesController.text;
 
                   showDialog(
                     context: context,

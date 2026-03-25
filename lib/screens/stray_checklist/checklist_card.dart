@@ -43,15 +43,15 @@ class ChecklistCard extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
+                    color: Color.fromARGB(255, 77, 77, 77),
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   "$completed/$total",
-                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+                  style: const TextStyle(color: Color.fromARGB(255, 77, 77, 77), fontSize: 12),
                 ),
               ],
             ),

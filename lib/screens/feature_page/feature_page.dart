@@ -12,6 +12,7 @@ import '../../models/stray.dart';
 import '../../models/stray_storage.dart';
 import '../../widgets/feature_menu_dropdown.dart';
 import '../../widgets/feature_page_stats.dart';
+import '../../widgets/dialogs.dart';
 
 class FeaturePage extends StatefulWidget {
   final Stray stray;
@@ -99,7 +100,8 @@ class _FeaturePageState extends State<FeaturePage> {
                   ..imagePath = widget.stray.imagePath
                   ..temperament = widget.stray.temperament
                   ..deworming = widget.stray.deworming
-                  ..vaccination = widget.stray.vaccination;
+                  ..vaccination = widget.stray.vaccination
+                  ..notes = widget.stray.notes;
 
                 // 2️⃣ Navigate to EditEntryStep1
                 Navigator.pushNamed(
@@ -127,6 +129,7 @@ class _FeaturePageState extends State<FeaturePage> {
                   temperament: widget.stray.temperament,
                   deworming: widget.stray.deworming,
                   vaccination: widget.stray.vaccination,
+                  notes: widget.stray.notes,
                   isArchived: false,
                 );
 
@@ -234,21 +237,39 @@ class _FeaturePageState extends State<FeaturePage> {
                     const SizedBox(height: 16),
 
                     /// MEDICAL
+                    /// IntrinsicHeight to make the two boxes the same height, 
+                    /// even if the content is different
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _infoBox(
+                              title: "Deworming",
+                              icon: Icons.favorite_border,
+                              content: widget.stray.deworming,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _infoBox(
+                              title: "Vaccination",
+                              icon: Icons.health_and_safety_outlined,
+                              content: widget.stray.vaccination,
+                            ),
+                          ),
+                        ],
+                      )),
+                    const SizedBox(height: 16),
+
+                    /// NOTES
                     Row(
                       children: [
                         Expanded(
                           child: _infoBox(
-                            title: "Deworming",
-                            icon: Icons.favorite_border,
-                            content: widget.stray.deworming,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _infoBox(
-                            title: "Vaccination",
-                            icon: Icons.health_and_safety_outlined,
-                            content: widget.stray.vaccination,
+                            title: "Notes",
+                            icon: Icons.sticky_note_2_rounded,
+                            content: widget.stray.notes,
                           ),
                         ),
                       ],
@@ -361,12 +382,14 @@ class _FeaturePageState extends State<FeaturePage> {
     );
   }
 
-  /// 🔥 Reusable Info Box
+  /// Reusable Info Box
   Widget _infoBox({
     required String title,
     required IconData icon,
     required String content,
   }) {
+    final lines = content.split('\n').where((line) => line.trim().isNotEmpty).toList();
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -375,6 +398,7 @@ class _FeaturePageState extends State<FeaturePage> {
       ),
       child: Column(
         children: [
+          /// TITLE
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -387,105 +411,23 @@ class _FeaturePageState extends State<FeaturePage> {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
-            content.isEmpty ? "-" : content,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13),
-          ),
+
+          if (lines.isEmpty)
+            const Text("-", textAlign: TextAlign.center, style: TextStyle(fontSize: 13))
+
+          /// If there are multiple lines, display them as bullet points using the custom BulletPoint widget
+          else
+            ...lines.map((line) {
+              // Clean up manually typed dashes
+              String cleanLine = line.trim();
+              if (cleanLine.startsWith('-')) {
+                cleanLine = cleanLine.substring(1).trim();
+              }
+              // BulletPoint widget
+              return BulletPoint(text: cleanLine);
+            }),
         ],
       ),
     );
   }
-}
-
-/// ARCHIVE DIALOG
-void showArchiveDialog(BuildContext context, Stray stray) {
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: const Text("Archive Entry"),
-      content: const Text("Are you sure you want to archive this entry?"),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text("Cancel"),
-        ),
-
-        ///
-        TextButton(
-          onPressed: () async {
-            Navigator.pop(context); // Close the dialog
-
-            // Set the stray to archived
-            final archivedStray = Stray(
-              id: stray.id,
-              name: stray.name,
-              age: stray.age,
-              sex: stray.sex,
-              nickname: stray.nickname,
-              locations: stray.locations,
-              imagePath: stray.imagePath,
-              temperament: stray.temperament,
-              deworming: stray.deworming,
-              vaccination: stray.vaccination,
-              isArchived: true,
-            );
-
-            // Save it to database
-            await StrayStorage.updateStray(archivedStray);
-
-            // Pop the FeaturePage so the user returns to the Home list
-            if (context.mounted) {
-              Navigator.pop(context);
-            }
-          },
-          child: const Text("Archive", style: TextStyle(color: Colors.red)),
-        ),
-      ],
-    ),
-  );
-}
-
-/// DELETE DIALOG
-/// Dialog for permanently deleting a stray
-void showDeleteDialog(BuildContext parentContext, Stray stray) {
-  showDialog(
-    context: parentContext,
-    builder: (dialogContext) => AlertDialog(
-      title: const Text("Delete Forever", style: TextStyle(color: Colors.red)),
-      content: const Text(
-        "Are you sure you want to permanently delete this entry? This action cannot be undone.",
-      ),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              Navigator.pop(dialogContext), // Close just the dialog
-          child: const Text("Cancel"),
-        ),
-        TextButton(
-          onPressed: () async {
-            // 1. Close the dialog
-            Navigator.pop(dialogContext);
-
-            // 2. Delete the stray from the database entirely
-            await StrayStorage.deleteStray(stray.id);
-
-            // 3. Pop the FeaturePage to return to the Archive list
-            if (parentContext.mounted) {
-              Navigator.pop(parentContext);
-            }
-          },
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.red.withValues(
-              alpha: 0.1,
-            ), // light red background
-          ),
-          child: const Text(
-            "Delete",
-            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
-    ),
-  );
 }

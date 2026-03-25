@@ -10,4 +10,5 @@ class StrayForm {
   String temperament = '';
   String deworming = '';
   String vaccination = '';
+  String notes = '';
 }
