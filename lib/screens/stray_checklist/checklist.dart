@@ -14,15 +14,22 @@ class ChecklistScreen extends StatefulWidget {
 
 class _ChecklistScreenState extends State<ChecklistScreen> {
   final locations = [
+    "Box 1",
     "CAS",
     "CFOS",
+    "CDH",
     "CM",
     "CUB",
     "Dorms",
+    "Dorm Area",
+    "Hatchery",
     "New Admin",
+    "OWL",
     "Sotech",
     "Staff House",
+    "Teacher's Dorm",
     "SSF-HSU",
+    "Wetlab",
   ];
 
   Map<String, List<Stray>> locationStrays = {};
