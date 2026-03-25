@@ -99,7 +99,8 @@ class _FeaturePageState extends State<FeaturePage> {
                   ..imagePath = widget.stray.imagePath
                   ..temperament = widget.stray.temperament
                   ..deworming = widget.stray.deworming
-                  ..vaccination = widget.stray.vaccination;
+                  ..vaccination = widget.stray.vaccination
+                  ..notes = widget.stray.notes;
 
                 // 2️⃣ Navigate to EditEntryStep1
                 Navigator.pushNamed(
@@ -127,6 +128,7 @@ class _FeaturePageState extends State<FeaturePage> {
                   temperament: widget.stray.temperament,
                   deworming: widget.stray.deworming,
                   vaccination: widget.stray.vaccination,
+                  notes: widget.stray.notes,
                   isArchived: false,
                 );
 
@@ -249,6 +251,19 @@ class _FeaturePageState extends State<FeaturePage> {
                             title: "Vaccination",
                             icon: Icons.health_and_safety_outlined,
                             content: widget.stray.vaccination,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _infoBox(
+                            title: "Notes",
+                            icon: Icons.favorite_border,
+                            content: widget.stray.notes,
                           ),
                         ),
                       ],
@@ -428,6 +443,7 @@ void showArchiveDialog(BuildContext context, Stray stray) {
               temperament: stray.temperament,
               deworming: stray.deworming,
               vaccination: stray.vaccination,
+              notes: stray.notes,
               isArchived: true,
             );
 

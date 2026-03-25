@@ -16,6 +16,7 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
   late final TextEditingController temperamentController;
   late final TextEditingController dewormingController;
   late final TextEditingController vaccinationController;
+  late final TextEditingController notesController;
 
   @override
   void initState() {
@@ -26,6 +27,9 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
     dewormingController = TextEditingController(text: widget.form.deworming);
     vaccinationController = TextEditingController(
       text: widget.form.vaccination,
+    );
+    notesController = TextEditingController(
+      text: widget.form.notes,
     );
   }
 
@@ -41,6 +45,7 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
       temperament: widget.form.temperament,
       deworming: widget.form.deworming,
       vaccination: widget.form.vaccination,
+      notes: widget.form.notes,
     );
 
     await StrayStorage.updateStray(updated);
@@ -58,6 +63,7 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
     temperamentController.dispose();
     dewormingController.dispose();
     vaccinationController.dispose();
+    notesController.dispose();
     super.dispose();
   }
 
@@ -98,6 +104,11 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
               hint: "Provide vaccination details",
             ),
             const SizedBox(height: 32),
+            _MultilineField(
+              controller: notesController,
+              hint: "Additional notes or observations",
+            ),
+            const SizedBox(height: 32),
 
             SizedBox(
               width: double.infinity,
@@ -114,6 +125,7 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
                   widget.form.temperament = temperamentController.text;
                   widget.form.deworming = dewormingController.text;
                   widget.form.vaccination = vaccinationController.text;
+                  widget.form.notes = notesController.text;
 
                   _updateStray(); // directly update JSON
                 },

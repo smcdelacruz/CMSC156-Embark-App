@@ -11,6 +11,7 @@ class Stray {
   final String temperament;
   final String deworming;
   final String vaccination;
+  final String notes;
   final bool isArchived;
 
   Stray({
@@ -24,6 +25,7 @@ class Stray {
     required this.temperament,
     required this.deworming,
     required this.vaccination,
+    required this.notes,
     this.isArchived = false,
   });
 
@@ -39,6 +41,7 @@ class Stray {
       'temperament': temperament,
       'deworming': deworming,
       'vaccination': vaccination,
+      'notes': notes,
       'isArchived': isArchived,
     };
   }
@@ -55,6 +58,7 @@ class Stray {
       temperament: map['temperament'] ?? '',
       deworming: map['deworming'] ?? '',
       vaccination: map['vaccination'] ?? '',
+      notes: map['notes'] ?? '',
       isArchived: map['isArchived'] ?? false,
     );
   }
