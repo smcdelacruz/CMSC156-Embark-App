@@ -1,28 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/temp_stray_form.dart';
 import 'package:flutter/services.dart';
-import 'add_entry_steptwo.dart';
+import 'edit_entry_two.dart';
 import '../../widgets/app_color.dart';
 import '../../widgets/trait_chip.dart';
 
-// This is the first step of the Add Entry flow, where users input basic details about the stray.
-class AddEntryStep1 extends StatefulWidget {
-  const AddEntryStep1({super.key});
+class EditEntryStep1 extends StatefulWidget {
+  final StrayForm form; // pre-filled data
+  const EditEntryStep1({super.key, required this.form});
 
   @override
-  State<AddEntryStep1> createState() => _AddEntryStep1State();
+  State<EditEntryStep1> createState() => _EditEntryStep1State();
 }
 
-class _AddEntryStep1State extends State<AddEntryStep1> {
+class _EditEntryStep1State extends State<EditEntryStep1> {
   final _formKey = GlobalKey<FormState>();
-  final form = StrayForm();
 
-  final nameController = TextEditingController();
-  final ageController = TextEditingController();
-  final nicknameController = TextEditingController();
+  late final TextEditingController nameController;
+  late final TextEditingController ageController;
+  late final TextEditingController nicknameController;
 
   final List<String> locations = [
     "CAS",
@@ -36,11 +34,23 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
     "SSF-HSU",
   ];
 
-  List<String> selectedLocations = [];
+  late List<String> selectedLocations;
   String? sex;
-
   File? _image;
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.form.name);
+    ageController = TextEditingController(text: widget.form.age);
+    nicknameController = TextEditingController(text: widget.form.nickname);
+    selectedLocations = List.from(widget.form.locations);
+    sex = widget.form.sex.isNotEmpty ? widget.form.sex : null;
+    if (widget.form.imagePath.isNotEmpty) {
+      _image = File(widget.form.imagePath);
+    }
+  }
 
   Future<void> pickImage() async {
     final picked = await _picker.pickImage(source: ImageSource.gallery);
@@ -114,25 +124,11 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
         elevation: 0,
         leading: const BackButton(color: Colors.black87),
         title: const Text(
-          "Add a Campus Stray",
+          "Edit Stray Entry",
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.w700,
             fontSize: 18,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(3),
-          child: Container(
-            height: 3,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFFE9A08C),
-                  Color(0xFFE9A08C),
-                ], // salmon gradient
-              ),
-            ),
           ),
         ),
       ),
@@ -143,7 +139,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// IMAGE UPLOAD
+              /// IMAGE
               Center(
                 child: Stack(
                   children: [
@@ -186,15 +182,12 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                               ),
                       ),
                     ),
-
-                    // Remove button
                     if (_image != null)
                       Positioned(
                         top: 4,
                         right: 4,
                         child: GestureDetector(
-                          onTap: () =>
-                              setState(() => _image = null), // 🔹 removes photo
+                          onTap: () => setState(() => _image = null),
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.black54,
@@ -213,7 +206,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
               ),
               const SizedBox(height: 24),
 
-              /// NAME + AGE (row)
+              // NAME + AGE
               Row(
                 children: [
                   Expanded(
@@ -225,12 +218,9 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                         _buildField(
                           nameController,
                           hint: "Enter name",
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Name is required";
-                            }
-                            return null;
-                          },
+                          validator: (v) => v == null || v.isEmpty
+                              ? "Name is required"
+                              : null,
                         ),
                       ],
                     ),
@@ -249,12 +239,8 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Age is required";
-                            }
-                            return null;
-                          },
+                          validator: (v) =>
+                              v == null || v.isEmpty ? "Age is required" : null,
                         ),
                       ],
                     ),
@@ -263,7 +249,7 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
               ),
               const SizedBox(height: 12),
 
-              /// SEX + NICKNAME (row)
+              // SEX + NICKNAME
               Row(
                 children: [
                   Expanded(
@@ -272,13 +258,9 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       children: [
                         _buildLabel("Sex"),
                         DropdownButtonFormField<String>(
-                          initialValue: sex,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Sex is required";
-                            }
-                            return null;
-                          },
+                          value: sex,
+                          validator: (v) =>
+                              v == null || v.isEmpty ? "Sex is required" : null,
                           items: ["Male", "Female"]
                               .map(
                                 (e) =>
@@ -286,30 +268,6 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                               )
                               .toList(),
                           onChanged: (val) => setState(() => sex = val),
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: const EdgeInsets.all(14),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade200,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                color: Colors.grey.shade200,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                color: AppColors.primary.withValues(alpha: 0.6),
-                                width: 1.5,
-                              ),
-                            ),
-                          ),
                         ),
                       ],
                     ),
@@ -323,12 +281,9 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                         _buildField(
                           nicknameController,
                           hint: "Enter nickname/s",
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Nickname is required";
-                            }
-                            return null;
-                          },
+                          validator: (v) => v == null || v.isEmpty
+                              ? "Nickname is required"
+                              : null,
                         ),
                       ],
                     ),
@@ -337,101 +292,98 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
               ),
               const SizedBox(height: 12),
 
-              /// LOCATION
+              // LOCATION
               _buildLabel("Location"),
               FormField<List<String>>(
                 initialValue: selectedLocations,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Please select at least one location";
-                  }
-                  return null;
-                },
-                builder: (formFieldState) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: formFieldState.hasError
-                                ? Colors.red
-                                : Colors.grey.shade200,
-                          ),
-                        ),
-                        child: Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: locations.map((loc) {
-                            final isSelected = selectedLocations.contains(loc);
-                            return TraitChip(
-                              label: loc,
-                              selected: isSelected,
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    selectedLocations.remove(loc);
-                                  } else {
-                                    selectedLocations.add(loc);
-                                  }
-                                  formFieldState.didChange(
-                                    selectedLocations,
-                                  ); // 🔥 important
-                                });
-                              },
-                            );
-                          }).toList(),
+                validator: (v) => v == null || v.isEmpty
+                    ? "Select at least one location"
+                    : null,
+                builder: (state) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: state.hasError
+                              ? Colors.red
+                              : Colors.grey.shade200,
                         ),
                       ),
-
-                      /// ERROR TEXT (only shows when invalid)
-                      if (formFieldState.hasError)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Text(
-                            formFieldState.errorText!,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                            ),
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: locations.map((loc) {
+                          final selected = selectedLocations.contains(loc);
+                          return TraitChip(
+                            label: loc,
+                            selected: selected,
+                            onTap: () {
+                              setState(() {
+                                if (selected) {
+                                  selectedLocations.remove(loc);
+                                } else {
+                                  selectedLocations.add(loc);
+                                }
+                                state.didChange(selectedLocations);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    if (state.hasError)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: Text(
+                          state.errorText!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
                           ),
                         ),
-                    ],
-                  );
-                },
+                      ),
+                  ],
+                ),
               ),
               const SizedBox(height: 32),
 
-              /// NEXT BUTTON
+              // NEXT BUTTON
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      form.name = nameController.text;
-                      form.age = ageController.text;
-                      form.sex = sex ?? '';
-                      form.nickname = nicknameController.text;
-                      form.locations = selectedLocations;
-                      form.imagePath = _image?.path ?? '';
+                      // Save Step1 fields into form
+                      widget.form.name = nameController.text;
+                      widget.form.age = ageController.text;
+                      widget.form.sex = sex ?? '';
+                      widget.form.nickname = nicknameController.text;
+                      widget.form.locations = selectedLocations;
+                      widget.form.imagePath = _image?.path ?? '';
 
-                      Navigator.push(
+                      // Push Step2 and wait for updated Stray
+                      final updatedStray = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => AddEntryStep2(form: form),
+                          builder: (_) => EditEntryStep2(form: widget.form),
                         ),
                       );
+
+                      // If we got an updated Stray, pop Step1 and return it to FeaturePage
+                      if (updatedStray != null && context.mounted) {
+                        Navigator.pop(context, updatedStray);
+                      }
                     }
                   },
                   child: const Text(
@@ -440,7 +392,6 @@ class _AddEntryStep1State extends State<AddEntryStep1> {
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
-                      letterSpacing: 0.3,
                     ),
                   ),
                 ),

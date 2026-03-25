@@ -3,10 +3,11 @@ import 'screens/splash_screen.dart';
 import 'widgets/navbar.dart';
 import 'screens/home.dart';
 import 'screens/feature_page/feature_page.dart';
-import 'screens/feature_page/edit_entry.dart';
 import 'screens/archive_entry.dart';
 import 'screens/add_entry/add_entry_stepone.dart';
+import 'screens/feature_page/edit_entry_one.dart'; // only once
 import 'models/stray.dart';
+import 'models/temp_stray_form.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // Required before async platform calls
@@ -25,9 +26,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent, // 🔥 removes dark overlay
+          surfaceTintColor: Colors.transparent, // removes dark overlay
           elevation: 0,
-          scrolledUnderElevation: 0, // 🔥 disables darkening on scroll
+          scrolledUnderElevation: 0, // disables darkening on scroll
         ),
       ),
 
@@ -43,7 +44,11 @@ class MyApp extends StatelessWidget {
         },
         '/add': (context) => AddEntryStep1(),
         '/archive': (context) => const ArchiveEntryScreen(),
-        '/edit': (context) => const EditEntryPage(),
+        '/edit': (context) {
+          // Grab the StrayForm passed as arguments
+          final form = ModalRoute.of(context)!.settings.arguments as StrayForm;
+          return EditEntryStep1(form: form);
+        },
       },
     );
   }

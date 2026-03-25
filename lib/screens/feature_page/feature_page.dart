@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:like_button/like_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/temp_stray_form.dart';
 import '../../models/stray.dart';
 import '../../models/stray_storage.dart';
 import '../../widgets/feature_menu_dropdown.dart';
@@ -14,12 +15,14 @@ import '../../widgets/feature_page_stats.dart';
 
 class FeaturePage extends StatefulWidget {
   final Stray stray;
-  final bool isArchivedView; // New parameter to indicate if this page is being viewed from the Archive
+  final bool
+  isArchivedView; // New parameter to indicate if this page is being viewed from the Archive
 
   const FeaturePage({
-    super.key, 
-    required this.stray, 
-    this.isArchivedView = false});  // Default to false for the Home page
+    super.key,
+    required this.stray,
+    this.isArchivedView = false,
+  }); // Default to false for the Home page
 
   @override
   State<FeaturePage> createState() => _FeaturePageState();
@@ -82,15 +85,33 @@ class _FeaturePageState extends State<FeaturePage> {
             top: MediaQuery.of(context).padding.top + 16,
             right: 16,
             child: FeatureMenuDropdown(
-              isArchived: widget.isArchivedView, 
-              
+              isArchived: widget.isArchivedView,
+
               onEdit: () {
-                // TODO: Navigate to Edit screen
+                // 1️⃣ Convert Stray to StrayForm
+                final form = StrayForm()
+                  ..id = widget.stray.id
+                  ..name = widget.stray.name
+                  ..age = widget.stray.age
+                  ..sex = widget.stray.sex
+                  ..nickname = widget.stray.nickname
+                  ..locations = widget.stray.locations
+                  ..imagePath = widget.stray.imagePath
+                  ..temperament = widget.stray.temperament
+                  ..deworming = widget.stray.deworming
+                  ..vaccination = widget.stray.vaccination;
+
+                // 2️⃣ Navigate to EditEntryStep1
+                Navigator.pushNamed(
+                  context,
+                  '/edit', // matches main.dart route
+                  arguments: form,
+                );
               },
-              
+
               onArchive: () {
                 // Pass the current stray to the dialog
-                showArchiveDialog(context, widget.stray); 
+                showArchiveDialog(context, widget.stray);
               },
 
               onUnarchive: () async {
@@ -106,11 +127,11 @@ class _FeaturePageState extends State<FeaturePage> {
                   temperament: widget.stray.temperament,
                   deworming: widget.stray.deworming,
                   vaccination: widget.stray.vaccination,
-                  isArchived: false, 
+                  isArchived: false,
                 );
-                
+
                 await StrayStorage.updateStray(activeStray);
-                
+
                 if (context.mounted) {
                   Navigator.pop(context); // Go back to Archive Screen
                 }
@@ -266,7 +287,7 @@ class _FeaturePageState extends State<FeaturePage> {
                     dotSecondaryColor: Colors.red,
                   ),
                   size: 34,
-                  
+
                   // === ISLIKED LOGIC ===
                   isLiked: isLiked,
                   onTap: (bool currentLiked) async {
@@ -284,7 +305,7 @@ class _FeaturePageState extends State<FeaturePage> {
                     });
 
                     await prefs.setStringList('liked_strays', liked);
-                    return !currentLiked; 
+                    return !currentLiked;
                   },
 
                   // === UI LOGIC ===
@@ -297,7 +318,9 @@ class _FeaturePageState extends State<FeaturePage> {
                         children: [
                           Center(
                             child: Icon(
-                              isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+                              isLiked
+                                  ? Icons.favorite
+                                  : Icons.favorite_border_rounded,
                               color: const Color(0xFFF8EDEB),
                               size: 34,
                             ),
@@ -387,11 +410,12 @@ void showArchiveDialog(BuildContext context, Stray stray) {
           onPressed: () => Navigator.pop(context),
           child: const Text("Cancel"),
         ),
+
         ///
         TextButton(
           onPressed: () async {
             Navigator.pop(context); // Close the dialog
-            
+
             // Set the stray to archived
             final archivedStray = Stray(
               id: stray.id,
@@ -404,15 +428,15 @@ void showArchiveDialog(BuildContext context, Stray stray) {
               temperament: stray.temperament,
               deworming: stray.deworming,
               vaccination: stray.vaccination,
-              isArchived: true, 
+              isArchived: true,
             );
-            
+
             // Save it to database
             await StrayStorage.updateStray(archivedStray);
-            
+
             // Pop the FeaturePage so the user returns to the Home list
             if (context.mounted) {
-               Navigator.pop(context);
+              Navigator.pop(context);
             }
           },
           child: const Text("Archive", style: TextStyle(color: Colors.red)),
@@ -429,29 +453,37 @@ void showDeleteDialog(BuildContext parentContext, Stray stray) {
     context: parentContext,
     builder: (dialogContext) => AlertDialog(
       title: const Text("Delete Forever", style: TextStyle(color: Colors.red)),
-      content: const Text("Are you sure you want to permanently delete this entry? This action cannot be undone."),
+      content: const Text(
+        "Are you sure you want to permanently delete this entry? This action cannot be undone.",
+      ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(dialogContext), // Close just the dialog
+          onPressed: () =>
+              Navigator.pop(dialogContext), // Close just the dialog
           child: const Text("Cancel"),
         ),
         TextButton(
           onPressed: () async {
             // 1. Close the dialog
-            Navigator.pop(dialogContext); 
-            
+            Navigator.pop(dialogContext);
+
             // 2. Delete the stray from the database entirely
             await StrayStorage.deleteStray(stray.id);
-            
+
             // 3. Pop the FeaturePage to return to the Archive list
             if (parentContext.mounted) {
-               Navigator.pop(parentContext);
+              Navigator.pop(parentContext);
             }
           },
           style: TextButton.styleFrom(
-            backgroundColor: Colors.red.withValues(alpha: 0.1), // light red background
+            backgroundColor: Colors.red.withValues(
+              alpha: 0.1,
+            ), // light red background
           ),
-          child: const Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          child: const Text(
+            "Delete",
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          ),
         ),
       ],
     ),
