@@ -28,9 +28,7 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
     vaccinationController = TextEditingController(
       text: widget.form.vaccination,
     );
-    notesController = TextEditingController(
-      text: widget.form.notes,
-    );
+    notesController = TextEditingController(text: widget.form.notes);
   }
 
   Future<void> _updateStray() async {
@@ -89,21 +87,63 @@ class _EditEntryStep2State extends State<EditEntryStep2> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              "Temperament and Personality",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
             _MultilineField(
               controller: temperamentController,
               hint: "Describe temperament and personality",
             ),
             const SizedBox(height: 20),
+
+            const Text(
+              "Deworming",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
             _MultilineField(
               controller: dewormingController,
               hint: "Provide deworming details",
             ),
             const SizedBox(height: 20),
+
+            const Text(
+              "Vaccination",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
             _MultilineField(
               controller: vaccinationController,
               hint: "Provide vaccination details",
             ),
             const SizedBox(height: 32),
+            const Text(
+              "Notes",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 8),
             _MultilineField(
               controller: notesController,
               hint: "Additional notes or observations",

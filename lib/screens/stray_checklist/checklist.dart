@@ -95,20 +95,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                   "Areas",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    "$totalLiked/$totalStrays",
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 16),
