@@ -118,11 +118,15 @@ class BulletPoint extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-          const Text(
-            "• ", 
-            style: TextStyle(
-              fontSize: 16, 
-              fontWeight: FontWeight.bold)),
+          Container(
+            margin: const EdgeInsets.only(top: 7, right: 8, left: 4), 
+            width: 5, // Width of the bullet dot
+            height: 5, // Height of the bullet dot
+            decoration: const BoxDecoration(
+              color: Colors.black87,
+              shape: BoxShape.circle,
+            ),
+          ),
           Expanded(
             child: Text(
               text,
@@ -135,31 +139,4 @@ class BulletPoint extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Displays the Archive/Remove confirmation dialog
-void showArchiveDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text("Archive Post?"),
-        content: const Text("Are you sure you want to archive this post?"),
-        
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              // To add delete/archive logic
-            },
-            child: const Text("Archive", style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      );
-    },
-  );
 }
