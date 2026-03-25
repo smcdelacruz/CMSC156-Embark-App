@@ -9,6 +9,7 @@ import 'screens/add_entry/add_entry_stepone.dart';
 import 'models/stray.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized(); // Required before async platform calls
   runApp(const MyApp());
 }
 
